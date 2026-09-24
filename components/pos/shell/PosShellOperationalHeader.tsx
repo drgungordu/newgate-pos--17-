@@ -9,6 +9,30 @@ interface PosShellOperationalHeaderProps {
   onBackToHub: () => void;
 }
 
+const ROUTE_LABELS: Partial<Record<PosInternalRoute, string>> = {
+  HUB: 'Hub',
+  REGISTER: 'Register',
+  TABLES: 'Tables',
+  KDS: 'KDS',
+  ORDERS: 'Orders',
+  RESERVATIONS: 'Host',
+  CASH_DRAWER: 'Cash',
+  END_OF_DAY: 'EOD',
+  '86_AVAILABILITY': 'Availability',
+  SHIFT_CLOCK: 'Shift Clock',
+  POS_SETTINGS: 'Settings',
+  REPORTS: 'Reports',
+  CUSTOMERS: 'Customers',
+  KIOSK: 'Kiosk',
+  MANAGER_TOOLS: 'Diagnostics',
+  RETAIL_REGISTER: 'Register',
+  RETAIL_INVENTORY: 'Inventory',
+  RETAIL_RETURNS: 'Refunds',
+  GIVING_REGISTER: 'Register',
+  GIVING_KIOSK: 'Kiosk',
+  DONOR_CRM: 'Donors',
+};
+
 export const PosShellOperationalHeader: React.FC<PosShellOperationalHeaderProps> = ({
   posRoute,
   currentUser,
@@ -25,7 +49,7 @@ export const PosShellOperationalHeader: React.FC<PosShellOperationalHeaderProps>
           <span>App Hub</span>
         </button>
         <span className="text-slate-600">/</span>
-        <span className="text-sm font-bold text-white tracking-wide uppercase">{posRoute}</span>
+        <span className="text-sm font-bold text-white tracking-wide">{ROUTE_LABELS[posRoute] || 'POS App'}</span>
       </div>
 
       {currentUser && (

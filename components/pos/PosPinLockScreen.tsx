@@ -49,8 +49,8 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
   const verifyPin = (candidatePin: string) => {
     // 1. Check exact pin match in employee list
     const found = employees.find(e => {
-      const ePin = (e as any).pin || (e as any).passcode || '1234';
-      return ePin === candidatePin;
+      const ePin = (e as any).pin || (e as any).passcode;
+      return Boolean(ePin) && String(ePin) === candidatePin;
     });
 
     if (found) {
@@ -59,22 +59,9 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
       return;
     }
 
-    // Default master or standard test PINs
-    if (candidatePin === '1234' || candidatePin === '0000' || candidatePin === '1111') {
-      const fallback = employees[0] || {
-        id: 'EMP-01',
-        name: 'Manager Alex',
-        role: 'Admin',
-        permissions: ['*'],
-      };
-      NativeBridge.beep(2800, 80);
-      onUnlock(fallback as Employee);
-      return;
-    }
-
     // Invalid PIN
     NativeBridge.beep(800, 200);
-    setError('Invalid Employee PIN. Try 1234 or your staff PIN.');
+    setError('Invalid PIN.');
     setTimeout(() => {
       setPin('');
     }, 600);

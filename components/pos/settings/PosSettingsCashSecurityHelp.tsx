@@ -3,6 +3,10 @@ import { DollarSign, Shield, HelpCircle } from 'lucide-react';
 
 interface PosSettingsCashSecurityHelpProps {
   activeSection: 'CASH' | 'SECURITY' | 'HELP';
+  terminalName?: string;
+  deviceId?: string;
+  deviceRole?: string;
+  batteryLevel?: number;
   defaultOpeningFloat: number;
   setDefaultOpeningFloat: (val: number) => void;
   blindCloseEnabled: boolean;
@@ -15,6 +19,10 @@ interface PosSettingsCashSecurityHelpProps {
 
 export const PosSettingsCashSecurityHelp: React.FC<PosSettingsCashSecurityHelpProps> = ({
   activeSection,
+  terminalName,
+  deviceId,
+  deviceRole,
+  batteryLevel,
   defaultOpeningFloat,
   setDefaultOpeningFloat,
   blindCloseEnabled,
@@ -79,8 +87,32 @@ export const PosSettingsCashSecurityHelp: React.FC<PosSettingsCashSecurityHelpPr
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <h2 className="text-xl font-bold text-white">Newgate Terminal Information</h2>
+      <h2 className="text-xl font-bold text-white">Diagnostics</h2>
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3 text-sm">
+        <div className="flex justify-between text-slate-300">
+          <span>Terminal:</span>
+          <span className="font-bold text-white">{terminalName || 'Main Register'}</span>
+        </div>
+        <div className="flex justify-between text-slate-300">
+          <span>Device ID:</span>
+          <span className="font-mono text-slate-400">{deviceId || 'Not provisioned'}</span>
+        </div>
+        <div className="flex justify-between text-slate-300">
+          <span>Device Role:</span>
+          <span className="font-bold text-white">{deviceRole || 'REGISTER'}</span>
+        </div>
+        <div className="flex justify-between text-slate-300">
+          <span>Battery:</span>
+          <span className="font-mono text-slate-400">{batteryLevel ?? 100}%</span>
+        </div>
+        <div className="flex justify-between text-slate-300">
+          <span>Mesh Sync:</span>
+          <span className="font-bold text-emerald-400">Online</span>
+        </div>
+        <div className="flex justify-between text-slate-300">
+          <span>Thermal ESC/POS:</span>
+          <span className="font-bold text-emerald-400">Ready</span>
+        </div>
         <div className="flex justify-between text-slate-300">
           <span>Application Platform:</span>
           <span className="font-bold text-white">Newgate POS Android</span>

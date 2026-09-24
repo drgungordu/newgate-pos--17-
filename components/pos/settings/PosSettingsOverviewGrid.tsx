@@ -29,7 +29,7 @@ export const PosSettingsOverviewGrid: React.FC<PosSettingsOverviewGridProps> = (
     { id: 'KITCHEN', label: 'Kitchen & KDS Routing', desc: `${stations.length} active prep stations and expeditor routing`, icon: ChefHat, color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
     { id: 'TIPS', label: 'Tips & Gratuities', desc: 'Tip suggestions, prompt modes, and pooling rules', icon: Heart, color: 'text-pink-400 bg-pink-500/10 border-pink-500/20' },
     { id: 'RECEIPTS', label: 'Receipts & Printing', desc: 'Header branding, footers, and print templates', icon: Receipt, color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
-    { id: 'DEVICES', label: 'Hardware & Printers', desc: `Peripherals, thermal printers, cash drawer kicks`, icon: HardDrive, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
+    { id: 'DEVICES', label: 'Device Info', desc: `Terminal role, mode and connected peripherals`, icon: HardDrive, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
     { id: 'CASH', label: 'Cash Drawer Policies', desc: 'Opening float, blind closeouts, safe drops', icon: DollarSign, color: 'text-green-400 bg-green-500/10 border-green-500/20' },
     { id: 'SECURITY', label: 'Terminal Security', desc: 'Auto-lock timeouts, manager void approval', icon: Shield, color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
     { id: 'NETWORK', label: 'Network & Cloud Sync', desc: 'Offline queue status, connectivity diagnostics', icon: Wifi, color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },

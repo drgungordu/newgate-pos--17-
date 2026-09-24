@@ -184,7 +184,6 @@ export const PosShellRouteDispatcher: React.FC<PosShellRouteDispatcherProps> = (
           liveTickets={props.activeTickets || []}
           onStatusChange={props.onTicketStatusChange}
           onUpdateStatus={props.onTicketStatusChange}
-          printerLabels={props.printerLabels}
           kdsSettings={props.kdsSettings}
           settings={props.kdsSettings}
           onExit={() => setPosRoute('HUB')}
@@ -211,6 +210,10 @@ export const PosShellRouteDispatcher: React.FC<PosShellRouteDispatcherProps> = (
           tipConfig={props.tipConfig}
           taxConfig={props.taxConfig}
           kdsSettings={props.kdsSettings}
+          currentMode={props.currentMode}
+          deviceRole={props.currentDevice?.role}
+          terminalName={props.currentDevice?.name}
+          deviceId={props.currentDevice?.id}
           onExit={() => setPosRoute('HUB')}
           onOpenWebAdmin={props.onAdminExit}
           onSaveItem={props.onSaveItem}

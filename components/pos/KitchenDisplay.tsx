@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MOCK_PRINTER_LABELS } from '../../constants';
-import { KitchenTicket, KDSSettings, PrinterLabel, Employee } from '../../types';
+import { KitchenTicket, KDSSettings, Employee } from '../../types';
 import { KitchenRoutingService, StationConfig } from '../../services/kitchenRoutingService';
 import { LocalDbService } from '../../services/localDbService';
 import { PermissionService } from '../../services/permissionService';
@@ -18,7 +18,6 @@ interface KitchenDisplayProps {
   tickets?: KitchenTicket[];
   onUpdateStatus?: (id: string, status: KitchenTicket['status']) => void;
   onStatusChange?: (id: string, status: KitchenTicket['status']) => void;
-  printerLabels?: PrinterLabel[];
   onExit?: () => void;
   initialStationId?: string | null;
   currentUser?: Employee;
@@ -31,14 +30,13 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({
   tickets: propTickets,
   onUpdateStatus,
   onStatusChange,
-  printerLabels,
   onExit,
   initialStationId = null,
   currentUser,
 }) => {
   const tickets = liveTickets || propTickets || [];
   const effectiveSettings = settings || kdsSettings;
-  const activeLabels = (printerLabels && printerLabels.length > 0) ? printerLabels : MOCK_PRINTER_LABELS;
+  const activeLabels = MOCK_PRINTER_LABELS;
 
   const [selectedStation, setSelectedStation] = useState<string | null>(() => {
     if (initialStationId && currentUser && !PermissionService.canViewStation(currentUser, initialStationId)) {

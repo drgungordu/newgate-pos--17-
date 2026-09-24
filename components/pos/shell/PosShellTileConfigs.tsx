@@ -71,7 +71,6 @@ export interface AppTileConfig {
   icon: React.ReactNode;
   color: string;
   badge: string | null;
-  page: 0 | 1;
   permissionRequired: string;
 }
 
@@ -379,14 +378,13 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
 
   visibleApps.sort((a, b) => hubRouteOrder.indexOf(a.id) - hubRouteOrder.indexOf(b.id));
 
-  return visibleApps.map((app, idx) => ({
+  return visibleApps.map((app) => ({
     id: app.id,
     label: app.label,
     sub: typeof app.sub === 'function' ? app.sub(ctx) : app.sub,
     icon: app.icon,
     color: app.color,
     badge: app.badge ? app.badge(ctx) : null,
-    page: (idx < 12 ? 0 : 1) as 0 | 1,
     permissionRequired: app.requiredPermission,
   }));
 };

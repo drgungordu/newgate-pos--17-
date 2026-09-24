@@ -328,18 +328,11 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
   return (
     <div className="h-screen bg-[#171b20] text-slate-100 flex flex-col overflow-hidden selection:bg-indigo-500 selection:text-white select-none">
       <PosShellHeader
-        currentMode={currentMode}
-        deviceRole={currentDevice?.role || 'REGISTER'}
-        businessDate={businessDate}
+        businessName={activeMerchant?.name}
         currentUser={currentUser}
         activeUser={activeUser}
         onOpenGlobalSearch={props.onOpenGlobalSearch}
-        onOpenCfd={() => setShowCfd(true)}
-        onOpenProvisioning={() => setShowProvisioning(true)}
-        onAdminExit={handleAdminExit}
         onLockTerminal={() => setIsLocked(true)}
-        onDevChangeMode={isDevMode ? handleDevChangeMode : undefined}
-        onDevChangeRole={isDevMode ? handleDevChangeRole : undefined}
       />
 
       <div className="flex-1 min-h-0 flex overflow-hidden">
@@ -356,9 +349,6 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
           activeUser={activeUser || currentUser}
           businessDate={businessDate}
           drawerBalance={drawerBalance}
-          batteryLevel={batteryLevel}
-          terminalName={currentDevice?.name}
-          deviceId={currentDevice?.id}
           deviceRole={currentDevice?.role}
           onLockTerminal={() => setIsLocked(true)}
         />

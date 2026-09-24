@@ -310,31 +310,36 @@ export class DeviceIdentityService {
    * Disconnected / unverified peripherals return appropriate status instead of fake OK (P1 requirement)
    */
   static async runHardwareDiagnostics(): Promise<{
-    printer: { ok: boolean; status: string; latencyMs?: number };
-    scanner: { ok: boolean; status: string };
-    cashDrawer: { ok: boolean; status: string };
-    customerDisplay: { ok: boolean; status: string };
-    cardReader: { ok: boolean; status: string };
+    printer: { ok: boolean; state: 'SUPPORTED' | 'CONNECTED' | 'UNAVAILABLE'; status: string; latencyMs?: number };
+    scanner: { ok: boolean; state: 'SUPPORTED' | 'UNAVAILABLE'; status: string };
+    cashDrawer: { ok: boolean; state: 'SUPPORTED' | 'UNAVAILABLE'; status: string };
+    customerDisplay: { ok: boolean; state: 'SUPPORTED' | 'UNAVAILABLE'; status: string };
+    cardReader: { ok: boolean; state: 'SUPPORTED' | 'UNAVAILABLE'; status: string };
   }> {
     const current = await this.getCurrentDevice();
     const caps = current?.fingerprint?.capabilities;
+    const printerTest = caps?.hasBuiltInPrinter
+      ? await NativeBridge.printReceipt({ rawText: 'NEWGATE POS DIAGNOSTIC\n' })
+      : null;
 
     return {
-      printer: caps?.hasBuiltInPrinter 
-        ? { ok: true, status: 'CONNECTED (Integrated Thermal 80mm)', latencyMs: 12 }
-        : { ok: false, status: 'DISCONNECTED: No ESC/POS printer registered' },
+      printer: printerTest === 'PRINTED'
+        ? { ok: true, state: 'CONNECTED', status: 'Connected (Integrated Thermal 80mm)' }
+        : caps?.hasBuiltInPrinter
+        ? { ok: false, state: 'SUPPORTED', status: `Supported; printer test returned ${printerTest || 'NO_RESULT'}` }
+        : { ok: false, state: 'UNAVAILABLE', status: 'Unavailable: No ESC/POS printer registered' },
       scanner: caps?.hasBuiltInScanner
-        ? { ok: true, status: 'CONNECTED (2D Wedge Scanner Active)' }
-        : { ok: false, status: 'DISCONNECTED: Keyboard wedge / USB scanner offline' },
+        ? { ok: false, state: 'SUPPORTED', status: 'Supported (2D wedge scanner)' }
+        : { ok: false, state: 'UNAVAILABLE', status: 'Unavailable: No scanner capability detected' },
       cashDrawer: caps?.hasCashDrawerPort
-        ? { ok: true, status: 'READY (RJ12 24V Kick Circuit)' }
-        : { ok: false, status: 'UNSUPPORTED: No drawer kick port' },
+        ? { ok: false, state: 'SUPPORTED', status: 'Supported (RJ12 24V kick circuit)' }
+        : { ok: false, state: 'UNAVAILABLE', status: 'Unavailable: No drawer kick port' },
       customerDisplay: caps?.hasCustomerDisplay
-        ? { ok: true, status: 'CONNECTED (Secondary 10.1" Display)' }
-        : { ok: false, status: 'DISCONNECTED: No secondary line display detected' },
+        ? { ok: false, state: 'SUPPORTED', status: 'Supported (Secondary 10.1" display)' }
+        : { ok: false, state: 'UNAVAILABLE', status: 'Unavailable: No secondary display capability detected' },
       cardReader: caps?.hasNfcEmv
-        ? { ok: true, status: 'READY (Integrated EMV/NFC Chip Reader)' }
-        : { ok: false, status: 'DISCONNECTED: Payment terminal offline' },
+        ? { ok: false, state: 'SUPPORTED', status: 'Supported (Integrated EMV/NFC reader)' }
+        : { ok: false, state: 'UNAVAILABLE', status: 'Unavailable: No EMV/NFC capability detected' },
     };
   }
 

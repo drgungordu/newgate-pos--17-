@@ -22,6 +22,11 @@ export interface PosSettingsHubProps {
   tipConfig?: any;
   taxConfig?: any;
   kdsSettings?: any;
+  currentMode?: string;
+  deviceRole?: string;
+  terminalName?: string;
+  deviceId?: string;
+  batteryLevel?: number;
   onExit: () => void;
   onOpenWebAdmin?: () => void;
   onSaveItem: (item: InventoryItem) => void;

@@ -1,37 +1,22 @@
 import React from 'react';
 import { Search, Lock } from 'lucide-react';
 import { Employee } from '../../../types';
-import { MerchantMode, DeviceRole } from '../../../types/device';
 import { NativeBridge } from '../../../services/nativeBridge';
 
 interface PosShellHeaderProps {
-  currentMode: MerchantMode;
-  deviceRole?: DeviceRole;
-  businessDate: string;
+  businessName?: string;
   currentUser: Employee;
   activeUser: Employee | null;
   onOpenGlobalSearch?: () => void;
-  onOpenCfd: () => void;
-  onOpenProvisioning: () => void;
-  onAdminExit: () => void;
   onLockTerminal: () => void;
-  onDevChangeMode?: (mode: MerchantMode) => void;
-  onDevChangeRole?: (role: DeviceRole) => void;
 }
 
 export const PosShellHeader: React.FC<PosShellHeaderProps> = ({
-  currentMode,
-  deviceRole = 'REGISTER',
-  businessDate,
+  businessName = 'Newgate POS',
   currentUser,
   activeUser,
   onOpenGlobalSearch,
-  onOpenCfd,
-  onOpenProvisioning,
-  onAdminExit,
   onLockTerminal,
-  onDevChangeMode,
-  onDevChangeRole,
 }) => {
 
   return (
@@ -39,31 +24,9 @@ export const PosShellHeader: React.FC<PosShellHeaderProps> = ({
       <div className="flex items-center space-x-3 min-w-0">
         <div className="flex items-center space-x-2 min-w-0">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-          <h1 className="text-base font-black text-white tracking-tight truncate">Newgate POS</h1>
-          <div className="flex items-center gap-1.5">
-            <span
-              className="text-[9px] uppercase font-bold tracking-wider px-2 py-1 rounded-md bg-[#161a1f] text-slate-300 border border-[#343b44] flex items-center gap-1.5"
-              title="Merchant Mode: Locked to merchant business account / provisioned appliance profile"
-            >
-              <Lock size={10} className="text-slate-400" />
-              <span>{currentMode}</span>
-            </span>
-
-            {/* Device Role Badge */}
-            <span
-              className="text-[9px] uppercase font-bold tracking-wider px-2 py-1 rounded-md bg-indigo-950/70 text-indigo-300 border border-indigo-700/60 flex items-center gap-1.5"
-              title="Hardware Appliance Role: Governs active routes & tile visibility on this terminal"
-            >
-              <Lock size={10} className="text-indigo-400" />
-              <span>{deviceRole}</span>
-            </span>
-
-          </div>
+          <h1 className="text-base font-black text-white tracking-[0.18em] uppercase truncate">NEWGATE</h1>
+          <span className="text-xs text-slate-300 truncate max-w-[220px]">{businessName}</span>
         </div>
-
-        <span className="text-[10px] text-slate-400 font-mono hidden xl:inline">
-          Business Date: {businessDate}
-        </span>
       </div>
 
       <div className="flex items-center space-x-2">
@@ -74,7 +37,7 @@ export const PosShellHeader: React.FC<PosShellHeaderProps> = ({
             className="min-h-[44px] px-3 bg-[#161a1f] hover:bg-[#292f36] text-slate-200 rounded-lg text-xs font-bold flex items-center gap-2 border border-[#343b44] transition-colors"
           >
             <Search size={16} />
-            <span className="hidden md:inline">Global Search</span>
+            <span className="hidden md:inline">Search</span>
           </button>
         )}
 

@@ -44,8 +44,8 @@ export const PosShellHubGrid: React.FC<PosShellHubGridProps> = ({
               onClick={() => !disabled && onSelectRoute(tile.id)}
               className={`
                 group
-                min-h-[120px]
-                rounded-xl
+                min-h-[112px]
+                rounded-lg
                 flex flex-col
                 items-center
                 justify-center
@@ -66,11 +66,9 @@ export const PosShellHubGrid: React.FC<PosShellHubGridProps> = ({
                 h-[64px]
                 rounded-2xl
                 bg-[#2a3037]
-                border border-white/5
                 flex items-center
                 justify-center
                 text-indigo-300
-                shadow-sm
                 group-hover:bg-[#303740]
                 group-hover:text-indigo-200
               ">

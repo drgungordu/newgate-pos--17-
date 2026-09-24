@@ -28,6 +28,10 @@ export const PosSettingsHub: React.FC<PosSettingsHubProps> = ({
   tipConfig,
   taxConfig,
   kdsSettings,
+  currentMode,
+  deviceRole,
+  terminalName,
+  deviceId,
   onExit,
   onOpenWebAdmin,
   onSaveItem,
@@ -236,6 +240,8 @@ export const PosSettingsHub: React.FC<PosSettingsHubProps> = ({
         {activeSection === 'DEVICES' && (
           <PosSettingsDevicesSection
             currentUser={currentUser}
+            currentMode={currentMode}
+            deviceRole={deviceRole}
             printerIp={printerIp}
             setPrinterIp={setPrinterIp}
             printerPort={printerPort}
@@ -246,6 +252,9 @@ export const PosSettingsHub: React.FC<PosSettingsHubProps> = ({
         {['CASH', 'SECURITY', 'HELP'].includes(activeSection) && (
           <PosSettingsCashSecurityHelp
             activeSection={activeSection as any}
+            terminalName={terminalName}
+            deviceId={deviceId}
+            deviceRole={deviceRole}
             defaultOpeningFloat={defaultOpeningFloat}
             setDefaultOpeningFloat={setDefaultOpeningFloat}
             blindCloseEnabled={blindCloseEnabled}

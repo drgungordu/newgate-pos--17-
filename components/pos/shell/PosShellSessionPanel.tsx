@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wifi, Battery, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { Employee } from '../../../types';
 import { NativeBridge } from '../../../services/nativeBridge';
 
@@ -8,9 +8,6 @@ interface PosShellSessionPanelProps {
   activeUser: Employee;
   businessDate: string;
   drawerBalance: string;
-  batteryLevel: number;
-  terminalName?: string;
-  deviceId?: string;
   deviceRole?: string;
   onLockTerminal: () => void;
 }
@@ -20,31 +17,18 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
   activeUser,
   businessDate,
   drawerBalance,
-  batteryLevel,
-  terminalName,
-  deviceId,
   deviceRole,
   onLockTerminal,
 }) => {
+  if (deviceRole === 'HANDHELD') return null;
+
   return (
-    <aside aria-label="Status rail" className="w-full lg:w-[248px] xl:w-[280px] shrink-0 bg-[#20252b] border-l border-[#343b44] p-4 flex flex-col justify-between space-y-4 max-h-full overflow-y-auto">
+    <aside aria-label="Status rail" className="hidden 2xl:flex w-[260px] xl:w-[280px] shrink-0 bg-[#20252b] border-l border-[#343b44] p-4 flex-col justify-between space-y-4 max-h-full overflow-y-auto">
       <div className="space-y-4">
-        {/* Merchant Identity Branding */}
         <div>
-          <div className="text-[10px] font-mono uppercase tracking-widest text-indigo-400 font-black">
-            POS APPLIANCE
-          </div>
           <h2 className="text-base font-black text-white tracking-tight mt-0.5 truncate">
             {businessName}
           </h2>
-          <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
-            <span>{terminalName || 'Main Register'}{deviceId ? ` • ${deviceId}` : ''}</span>
-            {deviceRole && (
-              <span className="px-1.5 py-0.5 bg-indigo-950/80 text-indigo-300 font-mono text-[10px] font-bold rounded border border-indigo-700/60">
-                {deviceRole}
-              </span>
-            )}
-          </div>
         </div>
 
         {/* Current Employee Profile Card */}
@@ -82,30 +66,6 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
           </div>
         </div>
 
-        {/* Hardware & Network Status Indicator */}
-        <div className="space-y-2">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            Hardware & Telemetry
-          </div>
-          <div className="p-3 bg-slate-950/40 border-y border-slate-800/80 space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-slate-300">
-                <Wifi size={14} className="text-emerald-400" /> Mesh Sync
-              </span>
-              <span className="text-emerald-400 font-bold text-[11px]">Online (5ms)</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-slate-300">
-                <Battery size={14} className={batteryLevel > 20 ? 'text-emerald-400' : 'text-rose-400'} /> Battery
-              </span>
-              <span className="font-mono font-bold text-slate-200 text-[11px]">{batteryLevel}%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-[11px]">Thermal ESC/POS</span>
-              <span className="text-emerald-400 font-bold text-[11px]">Ready</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Primary Touch "LOCK / SIGN OUT" Action */}
