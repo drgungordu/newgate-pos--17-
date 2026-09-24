@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ShoppingBag, FileText, RotateCcw, DollarSign, Clock, Coffee,
+  ShoppingBag, FileText, RotateCcw, DollarSign, Clock, Coffee, BarChart3,
   Settings, LayoutGrid, Users, Wrench, Heart, Monitor, CreditCard,
   Utensils, Flame, EyeOff
 } from 'lucide-react';
@@ -21,6 +21,7 @@ export const ROUTE_PERMISSION_MAP: Record<PosInternalRoute, string> = {
   '86_AVAILABILITY': 'pos.86.access',
   SHIFT_CLOCK: 'pos.shifts.access',
   POS_SETTINGS: 'pos.settings.access',
+  REPORTS: 'pos.reports.view',
   CUSTOMERS: 'pos.customers.access',
   KIOSK: 'pos.kiosk.access',
   MANAGER_TOOLS: 'pos.diagnostics.access',
@@ -119,7 +120,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // Table Service
   {
     id: 'TABLES',
-    label: 'Tables & Dining',
+    label: 'Tables',
     sub: 'Floor plan, seat courses & checks',
     icon: <Utensils size={32} />,
     color: 'bg-orange-600 hover:bg-orange-700 text-white',
@@ -132,7 +133,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // Kitchen Display System
   {
     id: 'KDS',
-    label: 'Kitchen Display',
+    label: 'KDS',
     sub: 'Station routing, line prep & Expo',
     icon: <Flame size={32} />,
     color: 'bg-amber-600 hover:bg-amber-700 text-white',
@@ -145,7 +146,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // Orders & Receipts (All modes)
   {
     id: 'ORDERS',
-    label: 'Orders & Receipts',
+    label: 'Orders',
     sub: (ctx) => ctx.mode === 'NONPROFIT' ? 'Reprint receipts & deductible reports' : 'Open checks, takeout & order lookups',
     icon: <FileText size={32} />,
     color: 'bg-slate-800 hover:bg-slate-700 text-white',
@@ -157,7 +158,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // Reservations & Host
   {
     id: 'RESERVATIONS',
-    label: 'Host & Reservations',
+    label: 'Host',
     sub: 'Guest reservations & seating queue',
     icon: <Users size={32} />,
     color: 'bg-teal-700 hover:bg-teal-800 text-white',
@@ -169,7 +170,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // Cash Drawer (All modes)
   {
     id: 'CASH_DRAWER',
-    label: 'Cash Drawer',
+    label: 'Cash',
     sub: (ctx) => `Current float: ${ctx.drawerBalance}`,
     icon: <DollarSign size={32} />,
     color: 'bg-emerald-800 hover:bg-emerald-700 text-white',
@@ -180,7 +181,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // End of Day Closeout (All modes)
   {
     id: 'END_OF_DAY',
-    label: 'End of Day (EOD)',
+    label: 'EOD',
     sub: 'Close business day & Z-Report',
     icon: <Clock size={32} />,
     color: 'bg-rose-700 hover:bg-rose-800 text-white',
@@ -214,7 +215,7 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // POS Settings
   {
     id: 'POS_SETTINGS',
-    label: 'POS Settings',
+    label: 'Settings',
     sub: 'Appliance config, stations & rules',
     icon: <Settings size={32} />,
     color: 'bg-indigo-900 hover:bg-indigo-800 text-indigo-100',
@@ -222,10 +223,21 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
     deviceRoles: ['REGISTER', 'KDS', 'EXPO', 'HOST', 'SCANNER', 'MEMBERSHIP_DESK', 'MANAGER_STATION'],
     requiredPermission: 'pos.settings.access',
   },
+  // Sales and tax reports
+  {
+    id: 'REPORTS',
+    label: 'Reports',
+    sub: 'Sales, tax and closeout reports',
+    icon: <BarChart3 size={32} />,
+    color: 'bg-cyan-700 hover:bg-cyan-800 text-white',
+    merchantModes: ['RESTAURANT', 'RETAIL', 'NONPROFIT'],
+    deviceRoles: ['REGISTER', 'MANAGER_STATION'],
+    requiredPermission: 'pos.reports.view',
+  },
   // Customer CRM (Restaurant & Retail)
   {
     id: 'CUSTOMERS',
-    label: 'Customer CRM',
+    label: 'Customers',
     sub: 'Guest profiles, loyalty & history',
     icon: <Users size={32} />,
     color: 'bg-teal-700 hover:bg-teal-800 text-white',
@@ -247,18 +259,18 @@ export const POS_APP_REGISTRY: PosAppDefinition[] = [
   // Retail Inventory
   {
     id: 'RETAIL_INVENTORY',
-    label: 'Inventory & POs',
+    label: 'Inventory',
     sub: 'Stock counts, shelf labels & POs',
     icon: <LayoutGrid size={32} />,
     color: 'bg-sky-700 hover:bg-sky-800 text-white',
-    merchantModes: ['RETAIL'],
+    merchantModes: ['RESTAURANT', 'RETAIL'],
     deviceRoles: ['REGISTER', 'SCANNER', 'MANAGER_STATION'],
     requiredPermission: 'pos.inventory.access',
   },
   // Retail Returns / Refunds
   {
     id: 'RETAIL_RETURNS',
-    label: 'Returns & Exchanges',
+    label: 'Refund',
     sub: 'Process returns, restock & store credit',
     icon: <RotateCcw size={32} />,
     color: 'bg-amber-600 hover:bg-amber-700 text-white',
@@ -337,7 +349,14 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
   const deviceRole = ctx.deviceRole || 'REGISTER';
 
   // Strict Evaluation Formula:
+  const hubRouteOrder: PosInternalRoute[] = [
+    'REGISTER', 'ORDERS', 'TABLES', 'RETAIL_RETURNS',
+    'KDS', 'RESERVATIONS', 'CUSTOMERS', 'RETAIL_INVENTORY',
+    'CASH_DRAWER', 'END_OF_DAY', 'REPORTS', 'POS_SETTINGS',
+  ];
+
   const visibleApps = POS_APP_REGISTRY.filter(app => {
+    if (!hubRouteOrder.includes(app.id)) return false;
     // 1. Merchant Mode Filter
     const matchesMode = app.merchantModes.includes(currentMode);
     if (!matchesMode) return false;
@@ -358,19 +377,8 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
     return true;
   });
 
-  // Hardware Role Priority Ranking (elevate primary functions to the top)
-  const priorityList = ROLE_ROUTE_PRIORITY[deviceRole];
-  if (priorityList) {
-    visibleApps.sort((a, b) => {
-      const idxA = priorityList.indexOf(a.id);
-      const idxB = priorityList.indexOf(b.id);
-      const rankA = idxA === -1 ? 999 : idxA;
-      const rankB = idxB === -1 ? 999 : idxB;
-      return rankA - rankB;
-    });
-  }
+  visibleApps.sort((a, b) => hubRouteOrder.indexOf(a.id) - hubRouteOrder.indexOf(b.id));
 
-  // Compact pages so visible tiles cleanly fill Page 0 first (up to 8 tiles per page)
   return visibleApps.map((app, idx) => ({
     id: app.id,
     label: app.label,
@@ -378,7 +386,7 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
     icon: app.icon,
     color: app.color,
     badge: app.badge ? app.badge(ctx) : null,
-    page: (idx < 8 ? 0 : 1) as 0 | 1,
+    page: (idx < 12 ? 0 : 1) as 0 | 1,
     permissionRequired: app.requiredPermission,
   }));
 };

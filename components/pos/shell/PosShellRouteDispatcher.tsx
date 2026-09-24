@@ -27,6 +27,8 @@ import { NonprofitPOS } from '../../nonprofit/NonprofitPOS';
 import { GivingKiosk } from '../../nonprofit/GivingKiosk';
 import { NonprofitCRM } from '../../nonprofit/NonprofitCRM';
 import { KioskApp } from '../KioskApp';
+import SalesReports from '../../reports/SalesReports';
+import { MOCK_SALES_SUMMARY, MOCK_DEPOSITS, MOCK_TAX_REPORTS } from '../../../constants';
 
 export interface PosShellRouteDispatcherProps extends PosShellProps, PosShellPropsState {
   onRefreshStatus: () => void;
@@ -214,6 +216,19 @@ export const PosShellRouteDispatcher: React.FC<PosShellRouteDispatcherProps> = (
           onSaveItem={props.onSaveItem}
           onUpdateEmployee={props.onUpdateEmployee}
         />
+      );
+
+    case 'REPORTS':
+      return (
+        <div className="h-full bg-slate-900 overflow-y-auto">
+          <SalesReports
+            orders={props.orders || []}
+            salesData={MOCK_SALES_SUMMARY}
+            deposits={MOCK_DEPOSITS}
+            taxReports={MOCK_TAX_REPORTS}
+            onNavigate={setPosRoute}
+          />
+        </div>
       );
 
     case 'RESERVATIONS':

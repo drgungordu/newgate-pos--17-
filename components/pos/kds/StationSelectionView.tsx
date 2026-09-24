@@ -20,14 +20,14 @@ export const StationSelectionView: React.FC<StationSelectionViewProps> = ({
   isStationAuthorized,
 }) => {
   return (
-    <div className="h-full min-h-[calc(100vh-5rem)] flex flex-col bg-slate-950 text-white select-none">
+    <div className="h-full flex flex-col bg-[#161a1f] text-white select-none">
       {/* Top Header */}
-      <header className="h-20 px-6 md:px-10 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0 shadow-lg">
+      <header className="h-[58px] px-4 bg-[#20252b] border-b border-[#343b44] flex items-center justify-between shrink-0 shadow-lg">
         <div className="flex items-center space-x-4">
           {onExit && (
             <button
               onClick={onExit}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold text-sm flex items-center gap-2 border border-slate-700 transition-colors shadow-sm"
+              className="min-h-[44px] px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg font-bold text-xs flex items-center gap-2 border border-slate-700 transition-colors shadow-sm"
             >
               <ArrowLeft size={18} />
               <span>Back to POS Hub</span>
@@ -35,16 +35,16 @@ export const StationSelectionView: React.FC<StationSelectionViewProps> = ({
           )}
           <div className="flex items-center space-x-3">
             <div className="p-2.5 bg-orange-600/20 text-orange-400 rounded-xl border border-orange-500/30">
-              <ChefHat size={24} />
+              <ChefHat size={20} />
             </div>
             <div>
-              <h1 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-                Kitchen Display System (KDS)
+              <h1 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+                KDS
                 <span className="text-xs bg-indigo-600/30 text-indigo-300 font-bold px-2 py-0.5 rounded-full border border-indigo-500/30">
                   Station Routing
                 </span>
               </h1>
-              <p className="text-xs text-slate-400">Select an authorized prep station or dispatch screen</p>
+              <p className="hidden md:block text-[10px] text-slate-400">Select station</p>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@ export const StationSelectionView: React.FC<StationSelectionViewProps> = ({
           {stations.some(st => isStationAuthorized ? isStationAuthorized(st.id) : true) && (
             <button
               onClick={onOpenAddStationModal}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg transition-colors"
+              className="min-h-[44px] px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-xs flex items-center gap-2 shadow-lg transition-colors"
             >
               <Plus size={16} />
               <span>Add Custom Station</span>
@@ -63,13 +63,10 @@ export const StationSelectionView: React.FC<StationSelectionViewProps> = ({
       </header>
 
       {/* Station Selection Grid */}
-      <main className="flex-1 p-6 md:p-12 max-w-7xl mx-auto w-full flex flex-col justify-center">
-        <div className="mb-8 flex items-center justify-between">
+      <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col justify-center">
+        <div className="mb-5 flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-black text-white tracking-tight">Select Kitchen Station</h2>
-            <p className="text-slate-400 text-sm mt-1">
-              Choose the station this screen will display. Production line access is protected by station view permissions.
-            </p>
+            <h2 className="text-2xl font-black text-white tracking-tight">Select Station</h2>
           </div>
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-medium text-slate-400">
             <ShieldCheck size={14} className="text-emerald-400" />
@@ -77,7 +74,7 @@ export const StationSelectionView: React.FC<StationSelectionViewProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {stations.filter(st => isStationAuthorized ? isStationAuthorized(st.id) : true).map(st => {
             const count = getTicketCountForStation(st.id);
             const isExpo = st.id.toLowerCase() === 'expo';
@@ -87,7 +84,7 @@ export const StationSelectionView: React.FC<StationSelectionViewProps> = ({
               <button
                 key={st.id}
                 onClick={() => onSelectStation(st.id)}
-                className={`p-6 rounded-2xl shadow-xl transition-all duration-200 transform hover:-translate-y-1 active:translate-y-0 text-left relative flex flex-col justify-between h-48 border group ${
+                className={`min-h-[160px] p-4 rounded-xl shadow-xl transition-all duration-200 transform hover:-translate-y-1 active:translate-y-0 text-left relative flex flex-col justify-between border group ${
                   !authorized
                     ? 'bg-slate-900/40 border-slate-800/80 opacity-70 hover:border-rose-900/60'
                     : isExpo

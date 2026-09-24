@@ -69,13 +69,13 @@ const MenuGrid: React.FC<MenuGridProps> = ({
             {showQuickAdd && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in">
-                        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <h3 className="font-black text-lg text-slate-800 uppercase tracking-tight">Quick Add New Item</h3>
                             <button onClick={() => setShowQuickAdd(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                                 <X size={20} />
                             </button>
                         </div>
-                        <div className="p-6 space-y-4">
+                        <div className="p-4 space-y-4">
                             {quickAddError && (
                                 <div className="p-3 bg-red-50 text-red-600 rounded-xl text-xs font-bold">
                                     {quickAddError}
@@ -119,7 +119,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({
                                 </select>
                             </div>
                         </div>
-                        <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <div className="p-4 bg-slate-50 border-t border-slate-100 flex gap-3">
                             <button onClick={() => setShowQuickAdd(false)} className="flex-1 py-3 text-slate-500 font-bold text-xs uppercase">Cancel</button>
                             <button onClick={handleQuickAdd} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">Save & Add</button>
                         </div>
@@ -128,7 +128,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({
             )}
 
             {/* Search Header */}
-            <div className="p-6 bg-white border-b border-slate-100 flex gap-4 items-center">
+            <div className="p-4 bg-white border-b border-slate-200 flex gap-3 items-center">
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                     <input 
@@ -136,7 +136,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({
                         placeholder="Search menu items or scan barcode..." 
                         value={searchTerm}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all font-medium"
+                        className="w-full min-h-[52px] pl-12 pr-4 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all font-medium"
                     />
                 </div>
                 {onSaveItem && (
@@ -145,7 +145,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({
                             setNewItemCategory(activeCategory !== 'All' ? activeCategory : (categories[0]?.name || 'Uncategorized'));
                             setShowQuickAdd(true);
                         }}
-                        className="flex items-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 shadow-md transition-all active:scale-95 shrink-0"
+                        className="min-h-[52px] flex items-center gap-2 px-4 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 shadow-md transition-all active:scale-95 shrink-0"
                     >
                         <Plus size={16} /> Add Item
                     </button>
@@ -153,12 +153,12 @@ const MenuGrid: React.FC<MenuGridProps> = ({
             </div>
 
             {/* Category Selector */}
-            <div className="px-6 py-4 bg-white border-b border-slate-100 flex gap-2 overflow-x-auto scrollbar-hide shrink-0">
+            <div className="px-4 py-3 bg-white border-b border-slate-200 flex gap-2 overflow-x-auto scrollbar-hide shrink-0">
                 {displayCategories.map(cat => (
                     <button 
                         key={cat} 
                         onClick={() => onCategoryChange(cat)} 
-                        className={`px-6 py-2 rounded-full whitespace-nowrap text-xs font-black uppercase tracking-widest transition-all
+                        className={`min-h-[44px] px-5 rounded-full whitespace-nowrap text-xs font-black uppercase tracking-widest transition-all
                             ${activeCategory === cat 
                                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
                                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
@@ -169,14 +169,14 @@ const MenuGrid: React.FC<MenuGridProps> = ({
             </div>
 
             {/* Product Grid */}
-            <div className="flex-1 overflow-y-auto p-6">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="flex-1 overflow-y-auto p-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                     {items.map(item => (
                         <button 
                             key={item.id} 
                             onClick={() => onItemSelect(item)} 
                             disabled={!item.inStock}
-                            className={`group min-h-[116px] bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm active:scale-[0.98] hover:border-indigo-400 transition-all flex flex-col justify-between relative
+                            className={`group min-h-[128px] bg-white border border-slate-200 rounded-xl p-3 text-left shadow-sm active:scale-[0.98] hover:border-indigo-400 transition-all flex flex-col justify-between relative
                                 ${item.inStock 
                                     ? 'hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1 active:scale-95' 
                                     : 'opacity-50 grayscale cursor-not-allowed'}`}

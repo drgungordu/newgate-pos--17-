@@ -37,14 +37,14 @@ export const PosSettingsOverviewGrid: React.FC<PosSettingsOverviewGridProps> = (
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       {sections.map((sec) => {
         const Icon = sec.icon;
         return (
           <button
             key={sec.id}
             onClick={() => onSelectSection(sec.id)}
-            className="p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-850 text-left transition-all duration-200 group flex flex-col justify-between min-h-32"
+            className="min-h-[132px] p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-850 text-left transition-all duration-200 group flex flex-col justify-between"
           >
             <div className="flex items-start justify-between">
               <div className={`p-3 rounded-xl border ${sec.color}`}>

@@ -46,7 +46,7 @@ export const TableFloorView: React.FC<TableFloorViewProps> = ({
   }, {} as Record<string, any>);
 
   return (
-    <div className="h-full flex flex-col bg-slate-100 animate-fade-in relative">
+    <div className="h-full flex flex-col bg-[#161a1f] animate-fade-in relative">
       <TableFloorHeader
         onExit={onExit}
         floorSections={floorSections}

@@ -27,9 +27,9 @@ const OrderSidebar: React.FC<OrderSidebarProps> = ({
     subtotal, tax, total, orderType, activeCustomer, activeDiscount, taxConfig, currentOrderId
 }) => {
     return (
-        <div className="w-[400px] border-l border-slate-200 bg-white flex flex-col shadow-2xl z-10 h-full">
+        <div className="w-[360px] xl:w-[380px] shrink-0 border-l border-slate-200 bg-white flex flex-col shadow-2xl z-10 h-full">
             {/* Header Status Bar */}
-            <div className="bg-slate-50 p-4 border-b border-slate-200 flex justify-between items-center text-xs font-bold text-slate-500">
+            <div className="bg-slate-50 p-3 border-b border-slate-200 flex justify-between items-center text-xs font-bold text-slate-500">
                 <div className="flex items-center gap-2">
                     <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded border border-indigo-200">{orderType}</span>
                     {activeCustomer && <span className="flex items-center gap-1 text-slate-700"><User size={12}/> {activeCustomer}</span>}
@@ -38,7 +38,7 @@ const OrderSidebar: React.FC<OrderSidebarProps> = ({
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white">
+            <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-white">
                 {(cart || []).length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-slate-300 space-y-6 opacity-60">
                         <div className="h-24 w-24 rounded-[2.5rem] bg-slate-50 shadow-inner flex items-center justify-center">
@@ -108,7 +108,7 @@ const OrderSidebar: React.FC<OrderSidebarProps> = ({
             </div>
 
             {/* Financial Summary */}
-            <div className="bg-slate-50 p-4 border-t border-slate-200 space-y-2">
+            <div className="bg-slate-50 p-3 border-t border-slate-200 space-y-2">
                 <div className="flex justify-between text-xs font-medium text-slate-500">
                     <span>Subtotal</span>
                     <span className="font-mono text-slate-800">${subtotal.toFixed(2)}</span>
@@ -143,23 +143,23 @@ const OrderSidebar: React.FC<OrderSidebarProps> = ({
             </div>
 
             {/* Action Grid */}
-            <div className="p-4 grid grid-cols-4 gap-2 bg-white border-t border-slate-200 h-24 shrink-0">
-                <button onClick={onDiscount} className="flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors border border-slate-200">
+            <div className="p-3 grid grid-cols-4 gap-2 bg-white border-t border-slate-200 h-28 shrink-0">
+                <button onClick={onDiscount} className="min-h-[52px] flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors border border-slate-200">
                     <Tag size={20} className="mb-1" />
                     <span className="text-[9px] font-bold uppercase">Discount</span>
                 </button>
-                <button onClick={onSplit} className="flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors border border-slate-200">
+                <button onClick={onSplit} className="min-h-[52px] flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors border border-slate-200">
                     <SplitSquareHorizontal size={20} className="mb-1" />
                     <span className="text-[9px] font-bold uppercase">Split</span>
                 </button>
-                <button onClick={onFire} className="flex flex-col items-center justify-center bg-orange-50 hover:bg-orange-100 rounded-lg text-orange-600 transition-colors border border-orange-200">
+                <button onClick={onFire} className="min-h-[52px] flex flex-col items-center justify-center bg-orange-50 hover:bg-orange-100 rounded-lg text-orange-600 transition-colors border border-orange-200">
                     <ChefHat size={20} className="mb-1" />
                     <span className="text-[9px] font-bold uppercase">Fire</span>
                 </button>
                 <button 
                     onClick={onCheckout}
                     disabled={(cart || []).length === 0}
-                    className="col-span-1 flex flex-col items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+                    className="col-span-1 min-h-[52px] flex flex-col items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
                 >
                     <CreditCard size={20} className="mb-1" />
                     <span className="text-[9px] font-bold uppercase">Pay</span>

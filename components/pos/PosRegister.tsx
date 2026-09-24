@@ -101,7 +101,7 @@ export const Register: React.FC<RegisterProps> = (props) => {
   };
 
   return (
-    <div className="h-full flex overflow-hidden bg-[#eef1f4] relative">
+    <div className="h-full flex overflow-hidden bg-[#161a1f] relative">
       {state.selectedItemForEdit && (
         <ItemDetailModal item={state.selectedItemForEdit} discounts={props.discounts} onClose={() => state.setSelectedItemForEdit(null)} onSave={(item) => state.safeUpdateCart(state.currentCart.map(i => i.cartId === item.cartId ? item : i))} onVoid={(item) => state.setRemovalItemPending({ cartId: item.cartId || item.id, item, isVoidOnly: true })} />
       )}
@@ -117,21 +117,21 @@ export const Register: React.FC<RegisterProps> = (props) => {
         <ReceiptPromptModal isOpen={state.showReceiptModal} orderContext={state.receiptContext} onComplete={handleReceiptOptionComplete} onClose={() => handleReceiptOptionComplete('NONE')} />
       )}
       
-      <div className="flex-1 flex flex-col bg-slate-50/50 relative">
-        <div className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-4">
-            <button onClick={() => state.setShowCustomerModal(true)} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-200 transition-colors">
+      <div className="flex-1 min-w-0 flex flex-col bg-slate-50/50 relative">
+        <div className="h-[58px] bg-white border-b border-slate-200 flex items-center justify-between px-4 shrink-0">
+          <div className="flex items-center gap-3">
+            <button onClick={() => state.setShowCustomerModal(true)} className="min-h-[44px] flex items-center gap-2 px-3 bg-slate-100 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200 transition-colors">
               {state.activeCustomer ? <><Check size={16} className="text-emerald-500" /> {state.activeCustomer}</> : <><UserPlus size={16} /> Add Customer</>}
             </button>
-            <select value={orderType} onChange={(e) => setOrderType(e.target.value)} className="bg-slate-100 border-none rounded-lg px-3 py-1.5 text-sm font-bold text-slate-600 focus:ring-0 cursor-pointer hover:bg-slate-200 transition-colors">
+            <select value={orderType} onChange={(e) => setOrderType(e.target.value)} className="min-h-[44px] bg-slate-100 border-none rounded-lg px-3 text-xs font-bold text-slate-600 focus:ring-0 cursor-pointer hover:bg-slate-200 transition-colors">
               <option>Dine-in</option>
               <option>Takeout</option>
               <option>Delivery</option>
             </select>
           </div>
-          <div className="relative w-64">
+          <div className="relative w-56 xl:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input type="text" placeholder="Search..." value={state.searchTerm} onChange={e => state.setSearchTerm(e.target.value)} className="w-full bg-slate-100 rounded-lg pl-9 pr-3 py-1.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500" />
+            <input type="text" placeholder="Search..." value={state.searchTerm} onChange={e => state.setSearchTerm(e.target.value)} className="w-full min-h-[44px] bg-slate-100 rounded-lg pl-9 pr-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
         </div>
 

@@ -15,11 +15,11 @@ export const PosShellOperationalHeader: React.FC<PosShellOperationalHeaderProps>
   onBackToHub,
 }) => {
   return (
-    <header className="h-14 bg-[#20252b] border-b border-slate-700 px-4 sm:px-6 flex items-center justify-between z-30 shrink-0">
+    <header className="h-[58px] bg-[#20252b] border-b border-[#343b44] px-4 flex items-center justify-between z-30 shrink-0">
       <div className="flex items-center space-x-3">
         <button
           onClick={onBackToHub}
-          className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors text-sm font-semibold"
+          className="min-h-[44px] flex items-center space-x-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors text-xs font-semibold"
         >
           <ArrowLeft size={16} />
           <span>App Hub</span>

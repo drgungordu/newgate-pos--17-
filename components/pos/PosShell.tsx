@@ -343,13 +343,12 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
       />
 
       <div className="flex-1 min-h-0 flex overflow-hidden">
-        <main className="flex-1 min-w-0 px-8 py-7 flex items-center overflow-y-auto">
+        <main className="flex-1 min-w-0 px-4 py-4 flex items-center overflow-y-auto">
         <PosShellHubGrid
           hubPage={hubPage}
           setHubPage={setHubPage}
           appTiles={appTiles}
           onSelectRoute={setPosRoute}
-          deviceId={currentDevice?.id}
         />
         </main>
         <PosShellSessionPanel

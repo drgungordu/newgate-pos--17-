@@ -27,14 +27,14 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
   onLockTerminal,
 }) => {
   return (
-    <aside className="w-full lg:w-[360px] xl:w-[400px] shrink-0 bg-[#20252b] border-l border-slate-700/80 p-6 flex flex-col justify-between space-y-6 max-h-full overflow-y-auto">
-      <div className="space-y-6">
+    <aside aria-label="Status rail" className="w-full lg:w-[248px] xl:w-[280px] shrink-0 bg-[#20252b] border-l border-[#343b44] p-4 flex flex-col justify-between space-y-4 max-h-full overflow-y-auto">
+      <div className="space-y-4">
         {/* Merchant Identity Branding */}
         <div>
           <div className="text-[10px] font-mono uppercase tracking-widest text-indigo-400 font-black">
-            NEWGATE POS APPLIANCE
+            POS APPLIANCE
           </div>
-          <h2 className="text-xl font-black text-white tracking-tight mt-0.5">
+          <h2 className="text-base font-black text-white tracking-tight mt-0.5 truncate">
             {businessName}
           </h2>
           <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
@@ -48,12 +48,12 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
         </div>
 
         {/* Current Employee Profile Card */}
-        <div className="p-4 bg-slate-800/50 border-y border-slate-700/70 flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-black text-lg flex items-center justify-center shadow-md">
+        <div className="p-3 bg-slate-800/50 border-y border-slate-700/70 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-base flex items-center justify-center">
             {activeUser.name.charAt(0)}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-black text-white truncate">{activeUser.name}</div>
+            <div className="text-xs font-black text-white truncate">{activeUser.name}</div>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="px-2 py-0.5 bg-indigo-950 text-indigo-300 rounded text-[10px] font-extrabold uppercase border border-indigo-800/80">
                 {activeUser.role}
@@ -65,18 +65,18 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
 
         {/* Operational Shift & Drawer Telemetry */}
         <div className="space-y-2 text-xs">
-          <div className="flex items-center justify-between p-2.5 bg-slate-800/40 rounded-xl border border-slate-800">
+          <div className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg border border-slate-800">
             <span className="text-slate-400">Business Date</span>
             <span className="font-mono text-white font-bold">{businessDate}</span>
           </div>
-          <div className="flex items-center justify-between p-2.5 bg-slate-800/40 rounded-xl border border-slate-800">
+          <div className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg border border-slate-800">
             <span className="text-slate-400">Shift Status</span>
             <span className="font-bold text-emerald-400 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Shift #1 (Active)
             </span>
           </div>
-          <div className="flex items-center justify-between p-2.5 bg-slate-800/40 rounded-xl border border-slate-800">
+          <div className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg border border-slate-800">
             <span className="text-slate-400">Cash Float</span>
             <span className="font-mono font-bold text-slate-200">{drawerBalance}</span>
           </div>
@@ -115,7 +115,7 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
             NativeBridge.beep(1600, 60);
             onLockTerminal();
           }}
-          className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-rose-950/50 transition-all transform active:scale-95 border border-rose-500/50"
+          className="w-full min-h-[52px] py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all transform active:scale-95 border border-rose-500/50"
         >
           <Lock size={18} />
           <span>Lock Terminal / Switch User</span>
