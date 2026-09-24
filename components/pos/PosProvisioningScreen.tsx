@@ -13,6 +13,7 @@ interface PosProvisioningScreenProps {
   onProvisionComplete?: (device: DeviceRecord) => void;
   onQuickDemoProvision?: () => void;
   onMockEmployeesCreated?: (employees: Employee[]) => void;
+  onDemoSuperAdmin?: () => void;
   onCancel?: () => void;
 }
 
@@ -24,6 +25,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   onProvisionComplete,
   onQuickDemoProvision,
   onMockEmployeesCreated,
+  onDemoSuperAdmin,
   onCancel,
 }) => {
   const isDevOrDemo = DeviceIdentityService.isDevOrDemoMode();
@@ -36,6 +38,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   const [demoMode, setDemoMode] = useState<Exclude<MerchantMode, 'HYBRID'>>(
     merchantMode === 'HYBRID' ? 'RESTAURANT' : merchantMode
   );
+  const [showDemoRegistration, setShowDemoRegistration] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
 
@@ -194,7 +197,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
     }
   };
 
-  const handleDemoRegistration = async () => {
+  const handleDemoRegistrationForMode = async (mode: Exclude<MerchantMode, 'HYBRID'>) => {
     if (!isDevOrDemo) {
       setError('Demo registration is disabled outside development mode.');
       return;
@@ -204,9 +207,9 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
     setError(null);
     try {
       const result = await PosDemoRegistrationService.register(
-        demoMode,
-        merchantId || 'B001',
-        merchantName || 'Newgate Demo Merchant'
+        mode,
+        `DEMO-${mode}`,
+        `Newgate Demo ${mode}`
       );
       onMockEmployeesCreated?.(result.employees);
       notifyComplete(result.device);
@@ -216,6 +219,8 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
       setLoading(false);
     }
   };
+
+  const handleDemoRegistration = () => handleDemoRegistrationForMode(demoMode);
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-slate-100 select-none">
@@ -238,6 +243,41 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
           </div>
         </div>
 
+        {isDevOrDemo && !showDemoRegistration ? (
+          <div className="space-y-3">
+            <div className="text-center text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300">Newgate Demo</div>
+            <div className="grid grid-cols-3 gap-3">
+              {(['RESTAURANT', 'RETAIL', 'NONPROFIT'] as const).map(mode => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => {
+                    setDemoMode(mode);
+                    void handleDemoRegistrationForMode(mode);
+                  }}
+                  className="min-h-[84px] rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500 text-white text-xs font-black transition-colors"
+                >
+                  {mode === 'NONPROFIT' ? 'Nonprofit' : mode.charAt(0) + mode.slice(1).toLowerCase()}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={onDemoSuperAdmin}
+              className="w-full min-h-[52px] rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-200 text-sm font-bold hover:bg-amber-500/20"
+            >
+              Super Admin
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDemoRegistration(true)}
+              className="w-full py-2 text-xs text-slate-500 hover:text-slate-300"
+            >
+              Use real Setup Code / QR
+            </button>
+          </div>
+        ) : (
+        <>
         {/* Tab switch between Setup Code, QR Code, and Manual Config */}
         <div className="grid grid-cols-3 p-1 bg-slate-950/80 rounded-xl border border-slate-800 text-xs font-bold">
           <button
@@ -493,6 +533,8 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
               <span>Save & Bind Appliance</span>
             </button>
           </form>
+        )}
+        </>
         )}
 
         {/* Mock registration is deliberately DEV-only and uses real persisted entities. */}

@@ -15,6 +15,8 @@ import {
   MOCK_MODIFIER_GROUPS, MOCK_PRINTER_LABELS, MOCK_ROLES, MOCK_ROLE_PERMISSIONS
 } from '../constants';
 import { LocalDbService } from '../services/localDbService';
+import { DeviceIdentityService } from '../services/deviceIdentityService';
+import { DemoSeedService } from '../services/demoSeedService';
 
 const getUrlPath = () => (typeof window !== 'undefined' ? window.location.pathname : '/');
 
@@ -29,17 +31,22 @@ const generateOrderId = () => {
 
 export const useAppState = () => {
   const [currentPath, setCurrentPath] = useState(getUrlPath());
+  const demoSeedEnabled = DeviceIdentityService.isDevOrDemoMode();
+  const demoBusinesses = demoSeedEnabled ? DemoSeedService.getDemoMerchants() : [];
+  const demoEmployees = demoSeedEnabled
+    ? (['RESTAURANT', 'RETAIL', 'NONPROFIT'] as const).flatMap(mode => DemoSeedService.getDemoEmployees(mode))
+    : [];
 
   // Global State
   const [currentUser, setCurrentUser] = useState<Employee | null>(null);
   const [isImpersonating, setIsImpersonating] = useState<boolean>(false);
-  const [businesses, setBusinesses] = useState<Business[]>(MOCK_BUSINESSES);
+  const [businesses, setBusinesses] = useState<Business[]>(() => [...MOCK_BUSINESSES, ...demoBusinesses]);
 
   // Data State
   const [orders, setOrders] = useState<DetailedOrder[]>(MOCK_DETAILED_ORDERS);
   const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
-  const [employeesState, setEmployeesState] = useState<Employee[]>(MOCK_EMPLOYEES);
+  const [employeesState, setEmployeesState] = useState<Employee[]>(() => [...MOCK_EMPLOYEES, ...demoEmployees]);
   const [inventory, setInventory] = useState<InventoryItem[]>(MOCK_INVENTORY_ITEMS);
   const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
   const [modifierGroups, setModifierGroups] = useState<ModifierGroup[]>(MOCK_MODIFIER_GROUPS);
@@ -105,6 +112,14 @@ export const useAppState = () => {
 
   // Effects
   useEffect(() => {
+    if (demoSeedEnabled) {
+      DemoSeedService.seed().catch(error => {
+        console.warn('[useAppState] Demo seed repository initialization failed:', error);
+      });
+    }
+  }, [demoSeedEnabled]);
+
+  useEffect(() => {
     const handlePopState = () => setCurrentPath(window.location.pathname);
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -133,6 +148,14 @@ export const useAppState = () => {
     } else {
       setActiveTab('Home');
     }
+  };
+
+  const handleOpenSuperAdminDemo = () => {
+    if (!demoSeedEnabled) return;
+    const superAdmin = employeesState.find(employee => employee.role === UserRole.SUPER_ADMIN);
+    if (!superAdmin) return;
+    setCurrentUser(superAdmin);
+    setActiveTab('SuperAdmin');
   };
 
   const handleLogout = () => {
@@ -403,6 +426,7 @@ export const useAppState = () => {
     handleAddInvoice, handleAddRecurringPlan, handleAddCashLog, handleUpdateReservation,
     handleAddSchedule, handleSyncSchedules, handleAddEmployee, handleRegisterEmployees, handleUpdateEmployee,
     handleDeleteEmployee, handleAddBusiness, handleSwitchMerchant, handleStopImpersonating,
+    handleOpenSuperAdminDemo,
     handleSaveFloorPlan, handleFireToKitchen, handleTicketStatusChange,
     handleDismissNotification, getMergedOrders
   };

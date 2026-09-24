@@ -44,6 +44,7 @@ const App: React.FC = () => {
     handleAddInvoice, handleAddRecurringPlan, handleAddCashLog, handleUpdateReservation,
     handleAddSchedule, handleSyncSchedules, handleAddEmployee, handleRegisterEmployees, handleUpdateEmployee,
     handleDeleteEmployee, handleAddBusiness, handleSwitchMerchant, handleStopImpersonating,
+    handleOpenSuperAdminDemo,
     handleSaveFloorPlan, handleFireToKitchen, handleTicketStatusChange,
     handleDismissNotification, getMergedOrders,
     
@@ -82,7 +83,7 @@ const App: React.FC = () => {
     : floorPlanTables.filter(t => !t.businessId || t.businessId === currentBizId);
 
   // Full-Screen Touch POS Shell
-  if (activeTab === 'POS Shell' || isAndroidPos) {
+  if (activeTab === 'POS Shell' || (isAndroidPos && activeTab !== 'SuperAdmin')) {
     const currentBusiness = businesses.find(b => b.id === posUser.businessId);
     const activeMerchantMode = currentBusiness?.merchantMode || 'RESTAURANT';
 
@@ -119,6 +120,7 @@ const App: React.FC = () => {
         schedules={schedules}
         filteredEmployees={isAndroidPos ? employeesState : filteredEmployees}
         onEmployeesSeeded={handleRegisterEmployees}
+        onOpenSuperAdmin={handleOpenSuperAdminDemo}
         businesses={businesses}
         onUpdateEmployee={handleUpdateEmployee}
         onNavigate={setActiveTab}

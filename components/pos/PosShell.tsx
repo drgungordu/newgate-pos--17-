@@ -266,6 +266,7 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
           setDemoEmployees(employees);
           props.onEmployeesSeeded?.(employees);
         }}
+        onDemoSuperAdmin={props.onOpenSuperAdmin}
       />
     );
   }

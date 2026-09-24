@@ -1,5 +1,6 @@
 import { Employee, UserRole } from '../types';
 import { AuditService } from './auditService';
+import { PermissionRepository } from './repositories/permissionRepository';
 
 export interface PermissionDefinition {
   id: string;
@@ -163,6 +164,12 @@ export const ROLE_DEFAULT_PERMISSIONS: Record<string, string[]> = {
     'kds.station.bar.view',
     'kds.station.dessert.view',
   ],
+  SALES: [
+    'pos.register.access',
+    'pos.orders.access',
+    'pos.customers.access',
+    'pos.shifts.access',
+  ],
   EMPLOYEE: [
     'pos.shifts.access',
     'pos.register.access',
@@ -271,6 +278,7 @@ export class PermissionService {
   static registerEmployees(employees: Employee[]): void {
     if (!Array.isArray(employees)) return;
     this.registeredEmployees = employees;
+    this.employeeCustomPermissions.clear();
     this.loadStoredRolePresets();
 
     const storedOverrides = this.loadStoredOverrides();
@@ -289,6 +297,12 @@ export class PermissionService {
         this.employeeCustomPermissions.set(emp.id, emp.permissions);
       }
     });
+  }
+
+  static invalidateEmployeePermissionCache(employeeId?: string): void {
+    if (employeeId) this.employeeCustomPermissions.delete(employeeId);
+    else this.employeeCustomPermissions.clear();
+    this.notifyListeners();
   }
 
   /**
@@ -339,6 +353,13 @@ export class PermissionService {
       updatedAt: new Date().toISOString(),
     };
     this.saveStoredOverrides(overrides);
+    await PermissionRepository.save({
+      id: employeeId,
+      employeeId,
+      permissions,
+      updatedAt: new Date().toISOString(),
+    });
+    this.invalidateEmployeePermissionCache(employeeId);
 
     await AuditService.log({
       actorId: actor.id,
@@ -390,6 +411,14 @@ export class PermissionService {
     existing.updatedAt = new Date().toISOString();
     stored[employeeId] = existing;
     this.saveStoredOverrides(stored);
+    await PermissionRepository.save({
+      id: employeeId,
+      employeeId,
+      role: role || emp?.role,
+      permissions: permissions || oldPerms,
+      passcode: passcode || emp?.passcode,
+      updatedAt: existing.updatedAt,
+    });
 
     if (role && oldRole && role !== oldRole) {
       await AuditService.log({
@@ -446,7 +475,7 @@ export class PermissionService {
       });
     }
 
-    this.notifyListeners();
+    this.invalidateEmployeePermissionCache(employeeId);
     return { success: true, employee: emp };
   }
 

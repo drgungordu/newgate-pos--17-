@@ -134,7 +134,7 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
                   onClick={() => account.passcode && verifyPin(account.passcode)}
                   className="min-h-[44px] rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 text-left text-xs text-amber-100 hover:bg-amber-500/20"
                 >
-                  <span className="block font-bold">{account.role}</span>
+                  <span className="block font-bold">{account.role} {account.passcode}</span>
                   <span className="block text-[10px] text-amber-300/70">{account.name}</span>
                 </button>
               ))}
