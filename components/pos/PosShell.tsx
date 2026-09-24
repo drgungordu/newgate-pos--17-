@@ -19,6 +19,7 @@ import { PosShellHubGrid } from './shell/PosShellHubGrid';
 import { PosShellSessionPanel } from './shell/PosShellSessionPanel';
 import { PosShellOperationalHeader } from './shell/PosShellOperationalHeader';
 import { PosShellRouteDispatcher } from './shell/PosShellRouteDispatcher';
+import { AuthSession } from '../../services/authService';
 
 export const PosShell: React.FC<PosShellProps> = (props) => {
   const {
@@ -55,6 +56,7 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
   const [hasInitializedSecurity, setHasInitializedSecurity] = useState(false);
   const [activeUser, setActiveUser] = useState<Employee>(currentUser);
   const [demoEmployees, setDemoEmployees] = useState<Employee[]>([]);
+  const [, setSessionId] = useState<string | null>(null);
 
   const isDevMode = DeviceIdentityService.isDevOrDemoMode();
 
@@ -219,7 +221,10 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
     else if (props.onNavigate) props.onNavigate('Home');
   };
 
-  const activeMerchant = businesses.find(b => b.id === (activeUser?.businessId || currentUser.businessId));
+  const activeMerchant = businesses.find(b => b.id === (currentDevice?.merchantId || activeUser?.businessId || currentUser.businessId));
+  const authenticatedEmployees = currentDevice?.merchantId
+    ? shellEmployees.filter(employee => employee.businessId === currentDevice.merchantId)
+    : shellEmployees;
 
   if (!isProvisioned || showProvisioning) {
     return (
@@ -274,10 +279,20 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
   if (isLocked) {
     return (
       <PosPinLockScreen
-        employees={filteredEmployees.length > 0 ? filteredEmployees : [currentUser]}
+          employees={authenticatedEmployees.length > 0 ? authenticatedEmployees : [currentUser]}
+          merchantId={currentDevice?.merchantId || currentUser.businessId || ''}
+          deviceId={currentDevice?.id || 'UNPROVISIONED'}
         merchantName={activeMerchant?.name || 'Lumi Restaurant & Bar'}
         terminalName={currentDevice?.name ? `${currentDevice.name} (${currentDevice.id})` : 'Front Register'}
-        demoAccounts={demoEmployees}
+          demoAccounts={demoEmployees.filter(employee => employee.businessId === currentDevice?.merchantId)}
+          onAuthenticated={(session: AuthSession) => {
+            setSessionId(session.sessionId);
+            setActiveUser({ ...session.employee, permissions: session.effectivePermissions });
+            PermissionService.registerEmployees([
+              ...shellEmployees.filter(employee => employee.id !== session.employee.id),
+              { ...session.employee, permissions: session.effectivePermissions },
+            ]);
+          }}
         onUnlock={(emp) => {
           setActiveUser(emp);
           setIsLocked(false);

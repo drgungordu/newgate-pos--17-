@@ -9,6 +9,7 @@ import { AppHeaderBar } from './components/app/AppHeaderBar';
 import { AppContentArea } from './components/app/AppContentArea';
 import { PosShell } from './components/pos/PosShell';
 import { GivingKiosk } from './components/nonprofit/GivingKiosk';
+import SuperAdmin from './components/SuperAdmin';
 import { useAppState } from './hooks/useAppState';
 
 const POS_APPLIANCE_BOOTSTRAP_USER: Employee = {
@@ -27,7 +28,7 @@ const App: React.FC = () => {
   const state = useAppState();
   const isAndroidPos = typeof document !== 'undefined' && document.documentElement.dataset.newgateTarget === 'android-pos';
   const {
-    currentPath, currentUser, businesses, orders, transactions, customers,
+    currentPath, currentUser, platformUser, businesses, orders, transactions, customers,
     roles, setRoles, rolePermissions, setRolePermissions, matrixState, setMatrixState, employeesState, inventory, setInventory, categories, setCategories, modifierGroups, setModifierGroups, discounts, setDiscounts, reservations,
     schedules, cashLogs, invoices, recurringPlans, feedbacks, setFeedbacks, waitlist, setWaitlist, giftCards, setGiftCards,
     printerLabels, setPrinterLabels,
@@ -59,7 +60,19 @@ const App: React.FC = () => {
     );
   }
 
-  if (!currentUser && !isAndroidPos || activeTab === 'Login' && !isAndroidPos) {
+  if (platformUser && activeTab === 'SuperAdmin') {
+    return (
+      <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+        <SuperAdmin
+          businesses={businesses}
+          onAddBusiness={handleAddBusiness}
+          onSwitchMerchant={(business) => handleSwitchMerchant(business.id)}
+        />
+      </div>
+    );
+  }
+
+  if ((!currentUser && !platformUser && !isAndroidPos) || (activeTab === 'Login' && !isAndroidPos)) {
     return <Login onLogin={handleLogin} employees={employeesState} businesses={businesses} />;
   }
 

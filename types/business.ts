@@ -7,6 +7,13 @@ export enum UserRole {
   CUSTOMER = 'CUSTOMER'
 }
 
+export interface PlatformUser {
+  id: string;
+  email: string;
+  role: 'SUPER_ADMIN';
+  merchantId: null;
+}
+
 export interface AdditionalTaxRate {
   id: string;
   name: string;

@@ -1,6 +1,7 @@
 import { Employee, UserRole } from '../types';
 import { AuditService } from './auditService';
 import { PermissionRepository } from './repositories/permissionRepository';
+import { EmployeeRepository } from './repositories/employeeRepository';
 
 export interface PermissionDefinition {
   id: string;
@@ -406,6 +407,10 @@ export class PermissionService {
       this.employeeCustomPermissions.set(employeeId, permissions);
       if (emp) emp.permissions = permissions;
       existing.permissions = permissions;
+    }
+
+    if (emp) {
+      await EmployeeRepository.upsert(emp);
     }
 
     existing.updatedAt = new Date().toISOString();

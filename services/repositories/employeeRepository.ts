@@ -19,6 +19,11 @@ export class EmployeeRepository {
   }
 
   static async findByBusinessId(businessId: string): Promise<Employee[]> {
-    return (await this.repository.find()).filter(employee => employee.businessId === businessId);
+    const repositoryEmployees = await this.repository.find();
+    const cachedEmployees = LocalDbService.getCachedEmployees();
+    const employees = Array.from(new Map(
+      [...repositoryEmployees, ...cachedEmployees].map(employee => [employee.id, employee])
+    ).values());
+    return employees.filter(employee => employee.businessId === businessId);
   }
 }

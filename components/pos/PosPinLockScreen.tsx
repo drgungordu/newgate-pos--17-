@@ -2,29 +2,37 @@ import React, { useState } from 'react';
 import { Lock, Delete, ArrowRight, Shield, RefreshCw, UserCheck, AlertCircle } from 'lucide-react';
 import { Employee } from '../../types';
 import { NativeBridge } from '../../services/nativeBridge';
+import { AuthService, AuthSession } from '../../services/authService';
 
 interface PosPinLockScreenProps {
   employees: Employee[];
+  merchantId: string;
+  deviceId: string;
   terminalName?: string;
   merchantName?: string;
   onUnlock: (employee: Employee) => void;
   onResetDevice?: () => void;
   demoAccounts?: Employee[];
+  onAuthenticated?: (session: AuthSession) => void;
 }
 
 export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
   employees,
+  merchantId,
+  deviceId,
   terminalName = 'Front Register 1 (DEV-POS-01)',
   merchantName = 'Lumi Restaurant & Bar',
   onUnlock,
   onResetDevice,
   demoAccounts = [],
+  onAuthenticated,
 }) => {
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const handleKeyPress = (num: string) => {
-    if (pin.length >= 6) return;
+    if (pin.length >= 6 || isVerifying) return;
     NativeBridge.beep(2200, 40);
     setError(null);
     const newPin = pin + num;
@@ -32,7 +40,7 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
 
     // Auto-check if 4 digits
     if (newPin.length === 4) {
-      verifyPin(newPin);
+      void verifyPin(newPin);
     }
   };
 
@@ -48,25 +56,20 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
     setPin('');
   };
 
-  const verifyPin = (candidatePin: string) => {
-    // 1. Check exact pin match in employee list
-    const found = employees.find(e => {
-      const ePin = (e as any).pin || (e as any).passcode;
-      return Boolean(ePin) && String(ePin) === candidatePin;
-    });
-
-    if (found) {
+  const verifyPin = async (candidatePin: string) => {
+    setIsVerifying(true);
+    try {
+      const session = await AuthService.loginWithPin({ merchantId, deviceId, pin: candidatePin });
       NativeBridge.beep(2800, 80);
-      onUnlock(found);
-      return;
+      onAuthenticated?.(session);
+      onUnlock(session.employee);
+    } catch {
+      NativeBridge.beep(800, 200);
+      setError('Invalid PIN.');
+      setTimeout(() => setPin(''), 600);
+    } finally {
+      setIsVerifying(false);
     }
-
-    // Invalid PIN
-    NativeBridge.beep(800, 200);
-    setError('Invalid PIN.');
-    setTimeout(() => {
-      setPin('');
-    }, 600);
   };
 
   const showDemoAccounts = Boolean((import.meta as any).env?.DEV && demoAccounts.length > 0);
@@ -131,7 +134,7 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
                 <button
                   key={account.id}
                   type="button"
-                  onClick={() => account.passcode && verifyPin(account.passcode)}
+                  onClick={() => account.passcode && void verifyPin(account.passcode)}
                   className="min-h-[44px] rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 text-left text-xs text-amber-100 hover:bg-amber-500/20"
                 >
                   <span className="block font-bold">{account.role} {account.passcode}</span>

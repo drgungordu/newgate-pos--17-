@@ -108,9 +108,11 @@ export const MOCK_EMPLOYEES: Employee[] = [
     { id: 'E105', name: 'Jane Host', role: 'Host', email: 'jane.h@lumi.com', hourlyRate: 18, hoursWorked: 25, status: 'Active', businessId: 'B001', deviceAccess: true, passcode: '2222' },
     { id: 'E106', name: 'Bob Employee', role: 'Employee', email: 'bob.e@lumi.com', hourlyRate: 15, hoursWorked: 20, status: 'Active', businessId: 'B001', deviceAccess: true, passcode: '3333' },
     
-    // System
-    { id: 'E_SUPER', name: 'System Super', role: UserRole.SUPER_ADMIN, email: 'super@newgatepos.com', hourlyRate: 100, hoursWorked: 0, status: 'Active', businessId: 'B001', deviceAccess: true, passcode: '9999' }
 ];
+
+export const MOCK_PLATFORM_USERS = [
+    { id: 'PLATFORM-SUPER-001', email: 'superadmin@newgatepos.local', role: UserRole.SUPER_ADMIN, merchantId: null },
+] as const;
 
 // --- CUSTOMER MOCKS ---
 export const MOCK_CUSTOMERS: Customer[] = [

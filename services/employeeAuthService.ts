@@ -15,7 +15,7 @@ export class EmployeeAuthService {
     employees: Employee[]
   ): Promise<AuthResult> {
     const emp = employees.find(
-      (e) => (e.passcode && e.passcode === enteredPin) || e.id === enteredPin
+      (e) => Boolean(e.passcode) && e.passcode === enteredPin
     );
     if (emp && emp.status === 'Active') {
       return { success: true, employee: emp };

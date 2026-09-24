@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  UserRole, Employee, DetailedOrder, Transaction, Customer, InventoryItem, Category,
+  UserRole, Employee, PlatformUser, DetailedOrder, Transaction, Customer, InventoryItem, Category,
   Reservation, Schedule, DiningTable, KDSSettings, AppIntegrationConfig,
   DiscountCode, GlobalTaxConfig, TipConfig, KitchenTicket, Notification, Business,
   DiningOrderItem, CartItem, CashLogEntry, Invoice, RecurringPlan, ModifierGroup,
@@ -17,6 +17,8 @@ import {
 import { LocalDbService } from '../services/localDbService';
 import { DeviceIdentityService } from '../services/deviceIdentityService';
 import { DemoSeedService } from '../services/demoSeedService';
+import { PlatformAuthService } from '../services/platformAuthService';
+import { EmployeeRepository } from '../services/repositories/employeeRepository';
 
 const getUrlPath = () => (typeof window !== 'undefined' ? window.location.pathname : '/');
 
@@ -39,6 +41,7 @@ export const useAppState = () => {
 
   // Global State
   const [currentUser, setCurrentUser] = useState<Employee | null>(null);
+  const [platformUser, setPlatformUser] = useState<PlatformUser | null>(null);
   const [isImpersonating, setIsImpersonating] = useState<boolean>(false);
   const [businesses, setBusinesses] = useState<Business[]>(() => [...MOCK_BUSINESSES, ...demoBusinesses]);
 
@@ -140,26 +143,20 @@ export const useAppState = () => {
   // Handlers
   const handleLogin = (user: Employee) => {
     setCurrentUser(user);
-    const posOnlyRoles = ['Server Lead', 'Server', 'Host', 'Employee', UserRole.CASHIER, UserRole.STAFF];
-    if (posOnlyRoles.includes(user.role)) {
-      setActiveTab('New Sale');
-    } else if (user.role === UserRole.SUPER_ADMIN) {
-      setActiveTab('SuperAdmin');
-    } else {
-      setActiveTab('Home');
-    }
+    setPlatformUser(null);
+    setActiveTab('Home');
   };
 
   const handleOpenSuperAdminDemo = () => {
     if (!demoSeedEnabled) return;
-    const superAdmin = employeesState.find(employee => employee.role === UserRole.SUPER_ADMIN);
-    if (!superAdmin) return;
-    setCurrentUser(superAdmin);
+    setCurrentUser(null);
+    setPlatformUser(PlatformAuthService.loginDemoSuperAdmin());
     setActiveTab('SuperAdmin');
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setPlatformUser(null);
     setActiveTab('Login');
     setIsProfileMenuOpen(false);
   };
@@ -171,15 +168,6 @@ export const useAppState = () => {
       setShowRoleSwitcher(false);
       setIsProfileMenuOpen(false);
     } else {
-      if (roleName === UserRole.SUPER_ADMIN) {
-        const sa = MOCK_EMPLOYEES.find(u => u.role === UserRole.SUPER_ADMIN);
-        if (sa) {
-          handleLogin(sa);
-          setShowRoleSwitcher(false);
-          setIsProfileMenuOpen(false);
-          return;
-        }
-      }
       alert(`No user found with role: ${roleName}`);
     }
   };
@@ -300,6 +288,7 @@ export const useAppState = () => {
 
   const handleUpdateEmployee = (updatedEmp: Employee) => {
     setEmployeesState(prev => prev.map(emp => emp.id === updatedEmp.id ? updatedEmp : emp));
+    void EmployeeRepository.upsert(updatedEmp);
   };
 
   const handleDeleteEmployee = (id: string) => {
@@ -407,7 +396,7 @@ export const useAppState = () => {
   };
 
   return {
-    currentPath, currentUser, businesses, orders, transactions, customers,
+    currentPath, currentUser, platformUser, businesses, orders, transactions, customers,
     roles, setRoles, rolePermissions, setRolePermissions, matrixState, setMatrixState,
     employeesState, inventory, setInventory, categories, setCategories, modifierGroups, setModifierGroups,
     discounts, setDiscounts, reservations, schedules, cashLogs, invoices, recurringPlans,
