@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserRole } from './types';
+import { Employee, UserRole } from './types';
 import Login from './components/auth/Login';
 import ReceiptFeedback from './components/hardware/ReceiptFeedback';
 
@@ -11,8 +11,21 @@ import { PosShell } from './components/pos/PosShell';
 import { GivingKiosk } from './components/nonprofit/GivingKiosk';
 import { useAppState } from './hooks/useAppState';
 
+const POS_APPLIANCE_BOOTSTRAP_USER: Employee = {
+  id: 'POS-BOOTSTRAP',
+  name: 'POS Terminal',
+  role: 'POS_APPLIANCE',
+  email: 'pos-terminal@newgate.local',
+  hourlyRate: 0,
+  hoursWorked: 0,
+  status: 'Active',
+  businessId: 'B001',
+  deviceAccess: true,
+};
+
 const App: React.FC = () => {
   const state = useAppState();
+  const isAndroidPos = typeof document !== 'undefined' && document.documentElement.dataset.newgateTarget === 'android-pos';
   const {
     currentPath, currentUser, businesses, orders, transactions, customers,
     roles, setRoles, rolePermissions, setRolePermissions, matrixState, setMatrixState, employeesState, inventory, setInventory, categories, setCategories, modifierGroups, setModifierGroups, discounts, setDiscounts, reservations,
@@ -29,7 +42,7 @@ const App: React.FC = () => {
     handleProcessSale, handleUpdateTableOrder, handleUpdateTableStatus, handleSaveItem,
     handleDeleteItem, handleAddCustomer, handleUpdateCustomer, handleDeleteCustomer,
     handleAddInvoice, handleAddRecurringPlan, handleAddCashLog, handleUpdateReservation,
-    handleAddSchedule, handleSyncSchedules, handleAddEmployee, handleUpdateEmployee,
+    handleAddSchedule, handleSyncSchedules, handleAddEmployee, handleRegisterEmployees, handleUpdateEmployee,
     handleDeleteEmployee, handleAddBusiness, handleSwitchMerchant, handleStopImpersonating,
     handleSaveFloorPlan, handleFireToKitchen, handleTicketStatusChange,
     handleDismissNotification, getMergedOrders,
@@ -45,13 +58,14 @@ const App: React.FC = () => {
     );
   }
 
-  if (!currentUser || activeTab === 'Login') {
+  if (!currentUser && !isAndroidPos || activeTab === 'Login' && !isAndroidPos) {
     return <Login onLogin={handleLogin} employees={employeesState} businesses={businesses} />;
   }
 
-  const currentBizId = currentUser?.businessId;
+  const posUser = currentUser || POS_APPLIANCE_BOOTSTRAP_USER;
+  const currentBizId = posUser.businessId;
 
-  const filteredEmployees = currentUser?.role === UserRole.SUPER_ADMIN && !isImpersonating 
+  const filteredEmployees = posUser.role === UserRole.SUPER_ADMIN && !isImpersonating 
     ? employeesState 
     : employeesState.filter(e => e.businessId === currentBizId);
 
@@ -68,13 +82,13 @@ const App: React.FC = () => {
     : floorPlanTables.filter(t => !t.businessId || t.businessId === currentBizId);
 
   // Full-Screen Touch POS Shell
-  if (activeTab === 'POS Shell') {
-    const currentBusiness = businesses.find(b => b.id === currentUser.businessId);
+  if (activeTab === 'POS Shell' || isAndroidPos) {
+    const currentBusiness = businesses.find(b => b.id === posUser.businessId);
     const activeMerchantMode = currentBusiness?.merchantMode || 'RESTAURANT';
 
     return (
       <PosShell
-        currentUser={currentUser}
+        currentUser={posUser}
         merchantMode={activeMerchantMode}
         inventory={filteredInventory}
         categories={filteredCategories}
@@ -103,7 +117,8 @@ const App: React.FC = () => {
         onSaveItem={handleSaveItem}
         printerLabels={printerLabels}
         schedules={schedules}
-        filteredEmployees={filteredEmployees}
+        filteredEmployees={isAndroidPos ? employeesState : filteredEmployees}
+        onEmployeesSeeded={handleRegisterEmployees}
         businesses={businesses}
         onUpdateEmployee={handleUpdateEmployee}
         onNavigate={setActiveTab}

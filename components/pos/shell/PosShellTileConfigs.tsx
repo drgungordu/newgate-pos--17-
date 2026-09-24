@@ -348,8 +348,13 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
   const deviceRole = ctx.deviceRole || 'REGISTER';
 
   // Strict Evaluation Formula:
+  const registerRoute: PosInternalRoute = currentMode === 'RETAIL'
+    ? 'RETAIL_REGISTER'
+    : currentMode === 'NONPROFIT'
+    ? 'GIVING_REGISTER'
+    : 'REGISTER';
   const hubRouteOrder: PosInternalRoute[] = [
-    'REGISTER', 'ORDERS', 'TABLES', 'RETAIL_RETURNS',
+    registerRoute, 'ORDERS', 'TABLES', 'RETAIL_RETURNS',
     'KDS', 'RESERVATIONS', 'CUSTOMERS', 'RETAIL_INVENTORY',
     'CASH_DRAWER', 'END_OF_DAY', 'REPORTS', 'POS_SETTINGS',
   ];

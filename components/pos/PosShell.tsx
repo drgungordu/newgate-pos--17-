@@ -54,6 +54,7 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
   const [isLocked, setIsLocked] = useState(false);
   const [hasInitializedSecurity, setHasInitializedSecurity] = useState(false);
   const [activeUser, setActiveUser] = useState<Employee>(currentUser);
+  const [demoEmployees, setDemoEmployees] = useState<Employee[]>([]);
 
   const isDevMode = DeviceIdentityService.isDevOrDemoMode();
 
@@ -261,6 +262,10 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
           }
         }}
         onCancel={() => setShowProvisioning(false)}
+        onMockEmployeesCreated={(employees) => {
+          setDemoEmployees(employees);
+          props.onEmployeesSeeded?.(employees);
+        }}
       />
     );
   }
@@ -271,6 +276,7 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
         employees={filteredEmployees.length > 0 ? filteredEmployees : [currentUser]}
         merchantName={activeMerchant?.name || 'Lumi Restaurant & Bar'}
         terminalName={currentDevice?.name ? `${currentDevice.name} (${currentDevice.id})` : 'Front Register'}
+        demoAccounts={demoEmployees}
         onUnlock={(emp) => {
           setActiveUser(emp);
           setIsLocked(false);
@@ -349,6 +355,8 @@ export const PosShell: React.FC<PosShellProps> = (props) => {
           activeUser={activeUser || currentUser}
           businessDate={businessDate}
           drawerBalance={drawerBalance}
+          batteryLevel={batteryLevel}
+          terminalName={currentDevice?.name}
           deviceRole={currentDevice?.role}
           onLockTerminal={() => setIsLocked(true)}
         />

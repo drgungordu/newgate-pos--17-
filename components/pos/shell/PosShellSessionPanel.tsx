@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock } from 'lucide-react';
+import { Battery, Lock, Wifi } from 'lucide-react';
 import { Employee } from '../../../types';
 import { NativeBridge } from '../../../services/nativeBridge';
 
@@ -8,6 +8,8 @@ interface PosShellSessionPanelProps {
   activeUser: Employee;
   businessDate: string;
   drawerBalance: string;
+  batteryLevel: number;
+  terminalName?: string;
   deviceRole?: string;
   onLockTerminal: () => void;
 }
@@ -17,6 +19,8 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
   activeUser,
   businessDate,
   drawerBalance,
+  batteryLevel,
+  terminalName,
   deviceRole,
   onLockTerminal,
 }) => {
@@ -29,6 +33,7 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
           <h2 className="text-base font-black text-white tracking-tight mt-0.5 truncate">
             {businessName}
           </h2>
+          <div className="text-xs text-slate-400 truncate">{terminalName || 'Main Register'}</div>
         </div>
 
         {/* Current Employee Profile Card */}
@@ -63,6 +68,14 @@ export const PosShellSessionPanel: React.FC<PosShellSessionPanelProps> = ({
           <div className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg border border-slate-800">
             <span className="text-slate-400">Cash Float</span>
             <span className="font-mono font-bold text-slate-200">{drawerBalance}</span>
+          </div>
+          <div className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg border border-slate-800">
+            <span className="flex items-center gap-1.5 text-slate-400"><Wifi size={13} className="text-emerald-400" /> Online</span>
+            <span className="font-bold text-emerald-400">Ready</span>
+          </div>
+          <div className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg border border-slate-800">
+            <span className="flex items-center gap-1.5 text-slate-400"><Battery size={13} className={batteryLevel > 20 ? 'text-emerald-400' : 'text-rose-400'} /> Battery</span>
+            <span className="font-mono font-bold text-slate-200">{batteryLevel}%</span>
           </div>
         </div>
 

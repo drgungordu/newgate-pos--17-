@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Smartphone, QrCode, ArrowRight, ShieldCheck, RefreshCw, KeyRound, CheckCircle2, AlertCircle, Camera, Check, Settings2 } from 'lucide-react';
 import { DeviceIdentityService } from '../../services/deviceIdentityService';
 import { DeviceRecord, DeviceRole, MerchantMode, ProvisioningPayload } from '../../types/device';
+import { Employee } from '../../types';
+import { PosDemoRegistrationService } from '../../services/posDemoRegistrationService';
 
 interface PosProvisioningScreenProps {
   merchantId?: string;
@@ -10,6 +12,7 @@ interface PosProvisioningScreenProps {
   onProvisioned?: (device: DeviceRecord) => void;
   onProvisionComplete?: (device: DeviceRecord) => void;
   onQuickDemoProvision?: () => void;
+  onMockEmployeesCreated?: (employees: Employee[]) => void;
   onCancel?: () => void;
 }
 
@@ -20,6 +23,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   onProvisioned,
   onProvisionComplete,
   onQuickDemoProvision,
+  onMockEmployeesCreated,
   onCancel,
 }) => {
   const isDevOrDemo = DeviceIdentityService.isDevOrDemoMode();
@@ -29,6 +33,9 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [demoMode, setDemoMode] = useState<Exclude<MerchantMode, 'HYBRID'>>(
+    merchantMode === 'HYBRID' ? 'RESTAURANT' : merchantMode
+  );
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
 
@@ -182,6 +189,29 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
       notifyComplete(dev);
     } catch (err: any) {
       setError(err.message || 'Quick enrollment failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoRegistration = async () => {
+    if (!isDevOrDemo) {
+      setError('Demo registration is disabled outside development mode.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await PosDemoRegistrationService.register(
+        demoMode,
+        merchantId || 'B001',
+        merchantName || 'Newgate Demo Merchant'
+      );
+      onMockEmployeesCreated?.(result.employees);
+      notifyComplete(result.device);
+    } catch (err: any) {
+      setError(err.message || 'Demo registration failed.');
     } finally {
       setLoading(false);
     }
@@ -465,22 +495,36 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
           </form>
         )}
 
-        {/* Quick Demo Bypass strictly under Dev / Demo Mode Flag */}
+        {/* Mock registration is deliberately DEV-only and uses real persisted entities. */}
         {isDevOrDemo && (
           <div className="pt-4 border-t border-slate-800/80 text-center space-y-2">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold">
               <span>DEMO MODE ONLY</span>
             </div>
-            <p className="text-[11px] text-slate-400">
-              Quick development bypass for sandbox emulator testing:
-            </p>
+            <p className="text-[11px] text-slate-400">Register a demo POS and continue to the employee PIN screen.</p>
+            <div className="grid grid-cols-3 gap-2">
+              {(['RESTAURANT', 'RETAIL', 'NONPROFIT'] as const).map(mode => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setDemoMode(mode)}
+                  className={`min-h-[44px] rounded-lg text-[10px] font-black tracking-wider transition-colors border ${
+                    demoMode === mode
+                      ? 'bg-indigo-600 text-white border-indigo-500'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  {mode === 'NONPROFIT' ? 'NONPROFIT' : mode}
+                </button>
+              ))}
+            </div>
             <button
-              onClick={handleAutoEnroll}
+              onClick={handleDemoRegistration}
               disabled={loading}
               className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all border border-slate-700/60 flex items-center justify-center gap-1.5"
             >
               <ShieldCheck size={16} className="text-emerald-400" />
-              <span>Quick-Enroll DEV-POS-01 ({merchantName || 'Store'} • {merchantMode})</span>
+              <span>Register Demo POS & Continue to PIN</span>
             </button>
             {onCancel && (
               <button

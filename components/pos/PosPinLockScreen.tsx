@@ -9,6 +9,7 @@ interface PosPinLockScreenProps {
   merchantName?: string;
   onUnlock: (employee: Employee) => void;
   onResetDevice?: () => void;
+  demoAccounts?: Employee[];
 }
 
 export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
@@ -17,6 +18,7 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
   merchantName = 'Lumi Restaurant & Bar',
   onUnlock,
   onResetDevice,
+  demoAccounts = [],
 }) => {
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +69,8 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
     }, 600);
   };
 
+  const showDemoAccounts = Boolean((import.meta as any).env?.DEV && demoAccounts.length > 0);
+
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-between p-6 select-none text-white">
       {/* Top Terminal Info */}
@@ -116,6 +120,25 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
           <div className="p-2.5 bg-rose-950/70 border border-rose-800 text-rose-300 rounded-xl text-xs flex items-center gap-2 animate-shake">
             <AlertCircle size={15} className="text-rose-400 shrink-0" />
             <span>{error}</span>
+          </div>
+        )}
+
+        {showDemoAccounts && (
+          <div className="w-full space-y-2">
+            <div className="text-[10px] text-amber-300 uppercase tracking-wider font-bold text-center">Demo Accounts</div>
+            <div className="grid grid-cols-2 gap-2">
+              {demoAccounts.map(account => (
+                <button
+                  key={account.id}
+                  type="button"
+                  onClick={() => account.passcode && verifyPin(account.passcode)}
+                  className="min-h-[44px] rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 text-left text-xs text-amber-100 hover:bg-amber-500/20"
+                >
+                  <span className="block font-bold">{account.role}</span>
+                  <span className="block text-[10px] text-amber-300/70">{account.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

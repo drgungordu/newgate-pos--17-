@@ -266,6 +266,15 @@ export const useAppState = () => {
     setEmployeesState(prev => [...prev, linkedEmployee]);
   };
 
+  const handleRegisterEmployees = (newEmployees: Employee[]) => {
+    setEmployeesState(prev => {
+      const incomingIds = new Set(newEmployees.map(employee => employee.id));
+      const next = [...prev.filter(employee => !incomingIds.has(employee.id)), ...newEmployees];
+      LocalDbService.cacheEmployeeSnapshot(next);
+      return next;
+    });
+  };
+
   const handleUpdateEmployee = (updatedEmp: Employee) => {
     setEmployeesState(prev => prev.map(emp => emp.id === updatedEmp.id ? updatedEmp : emp));
   };
@@ -392,7 +401,7 @@ export const useAppState = () => {
     handleProcessSale, handleUpdateTableOrder, handleUpdateTableStatus, handleSaveItem,
     handleDeleteItem, handleAddCustomer, handleUpdateCustomer, handleDeleteCustomer,
     handleAddInvoice, handleAddRecurringPlan, handleAddCashLog, handleUpdateReservation,
-    handleAddSchedule, handleSyncSchedules, handleAddEmployee, handleUpdateEmployee,
+    handleAddSchedule, handleSyncSchedules, handleAddEmployee, handleRegisterEmployees, handleUpdateEmployee,
     handleDeleteEmployee, handleAddBusiness, handleSwitchMerchant, handleStopImpersonating,
     handleSaveFloorPlan, handleFireToKitchen, handleTicketStatusChange,
     handleDismissNotification, getMergedOrders
