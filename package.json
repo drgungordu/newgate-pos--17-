@@ -10,6 +10,7 @@
     "verify:production": "node scripts/verify-production.js",
     "verify:workflows": "node scripts/verify-workflows.js",
     "verify:e2e-matrix": "node scripts/verify-e2e-matrix.js",
+    "verify:demo-auth": "node scripts/verify-demo-auth.cjs",
     "build:targets": "vite build --outDir dist-targets",
     "preview": "vite preview"
   },

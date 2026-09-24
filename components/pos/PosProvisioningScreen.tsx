@@ -28,7 +28,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   onDemoSuperAdmin,
   onCancel,
 }) => {
-  const isDevOrDemo = DeviceIdentityService.isDevOrDemoMode();
+  const demoEntryEnabled = DeviceIdentityService.isDemoEntryEnabled();
   const [activeTab, setActiveTab] = useState<'CODE' | 'QR' | 'MANUAL'>('CODE');
   const [setupCode, setSetupCode] = useState('');
   const [qrRawInput, setQrRawInput] = useState('');
@@ -180,7 +180,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   }, [activeTab, cameraActive]);
 
   const handleAutoEnroll = async () => {
-    if (!DeviceIdentityService.isDevOrDemoMode()) {
+    if (!demoEntryEnabled) {
       setError('Development bypass is disabled in production. Please scan a Setup QR code or enter a Setup Code.');
       return;
     }
@@ -198,7 +198,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
   };
 
   const handleDemoRegistrationForMode = async (mode: Exclude<MerchantMode, 'HYBRID'>) => {
-    if (!isDevOrDemo) {
+    if (!demoEntryEnabled) {
       setError('Demo registration is disabled outside development mode.');
       return;
     }
@@ -243,7 +243,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
           </div>
         </div>
 
-        {isDevOrDemo && !showDemoRegistration ? (
+        {demoEntryEnabled && !showDemoRegistration ? (
           <div className="space-y-3">
             <div className="text-center text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300">Newgate Demo</div>
             <div className="grid grid-cols-3 gap-3">
@@ -538,7 +538,7 @@ export const PosProvisioningScreen: React.FC<PosProvisioningScreenProps> = ({
         )}
 
         {/* Mock registration is deliberately DEV-only and uses real persisted entities. */}
-        {isDevOrDemo && (
+        {demoEntryEnabled && (
           <div className="pt-4 border-t border-slate-800/80 text-center space-y-2">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold">
               <span>DEMO MODE ONLY</span>

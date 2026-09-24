@@ -3,6 +3,7 @@ import { Lock, Delete, ArrowRight, Shield, RefreshCw, UserCheck, AlertCircle } f
 import { Employee } from '../../types';
 import { NativeBridge } from '../../services/nativeBridge';
 import { AuthService, AuthSession } from '../../services/authService';
+import { DeviceIdentityService } from '../../services/deviceIdentityService';
 
 interface PosPinLockScreenProps {
   employees: Employee[];
@@ -72,7 +73,7 @@ export const PosPinLockScreen: React.FC<PosPinLockScreenProps> = ({
     }
   };
 
-  const showDemoAccounts = Boolean((import.meta as any).env?.DEV && demoAccounts.length > 0);
+  const showDemoAccounts = Boolean(DeviceIdentityService.isDemoEntryEnabled() && demoAccounts.length > 0);
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-between p-6 select-none text-white">

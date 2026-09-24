@@ -222,7 +222,12 @@ export class DeviceIdentityService {
    * Check if the application is running under DEV or DEMO mode flag.
    */
   static isDevOrDemoMode(): boolean {
-    return Boolean(typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV);
+    return this.isDemoEntryEnabled();
+  }
+
+  static isDemoEntryEnabled(): boolean {
+    const env = typeof import.meta !== 'undefined' ? (import.meta as any).env : undefined;
+    return Boolean(env?.DEV || env?.VITE_DEMO_ENTRY === 'true');
   }
 
   /**
