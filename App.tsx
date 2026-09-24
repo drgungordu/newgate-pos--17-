@@ -20,7 +20,6 @@ const POS_APPLIANCE_BOOTSTRAP_USER: Employee = {
   hourlyRate: 0,
   hoursWorked: 0,
   status: 'Active',
-  businessId: 'B001',
   deviceAccess: true,
 };
 
@@ -65,6 +64,9 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-slate-50 p-4 md:p-6">
         <SuperAdmin
           businesses={businesses}
+          employees={employeesState}
+          integrationConfig={integrationConfig}
+          onToggleIntegration={(key) => setIntegrationConfig(prev => ({ ...prev, [key]: !prev[key] }))}
           onAddBusiness={handleAddBusiness}
           onSwitchMerchant={(business) => handleSwitchMerchant(business.id)}
         />

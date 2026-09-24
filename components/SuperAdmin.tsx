@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Shield, Users, CreditCard, Scale, LayoutGrid, DollarSign, Activity, UserCheck, Search } from 'lucide-react';
+import { Shield, Users, CreditCard, Scale, LayoutGrid, DollarSign, Activity, UserCheck, Search, Smartphone, Flag, HeartPulse, ReceiptText } from 'lucide-react';
 import { AppIntegrationConfig, Business, Employee } from '../types';
 
 // Section Imports
@@ -11,6 +11,7 @@ import AppsSection from './SuperAdmin/AppsSection';
 import FinancialsSection from './SuperAdmin/FinancialsSection';
 import { SystemAuditSection } from './SuperAdmin/SystemAuditSection';
 import { PlatformUsersSection } from './SuperAdmin/PlatformUsersSection';
+import { PlatformModuleSection } from './SuperAdmin/PlatformModuleSection';
 
 interface SuperAdminProps {
     integrationConfig?: AppIntegrationConfig;
@@ -18,35 +19,43 @@ interface SuperAdminProps {
     businesses?: Business[];
     onAddBusiness?: (business: Business, owner: Partial<Employee>) => void;
     onSwitchMerchant?: (business: Business) => void;
+    employees?: Employee[];
 }
 
 const NAV_OPTIONS = [
     { id: 'Merchants', label: 'Merchants', icon: Users },
-    { id: 'Subscriptions', label: 'Tiers & Pricing', icon: CreditCard },
+    { id: 'Subscriptions', label: 'Subscriptions', icon: CreditCard },
+    { id: 'Plans', label: 'Plans', icon: ReceiptText },
+    { id: 'Devices', label: 'Devices', icon: Smartphone },
+    { id: 'MerchantUsers', label: 'Merchant Users', icon: UserCheck },
+    { id: 'FeatureFlags', label: 'Feature Flags', icon: Flag },
+    { id: 'CreditCardFee', label: 'Credit Card Fee', icon: DollarSign },
+    { id: 'PlatformAudit', label: 'Platform Audit', icon: Activity },
+    { id: 'SystemHealth', label: 'System Health', icon: HeartPulse },
     { id: 'Governance', label: 'Governance', icon: Scale },
-    { id: 'Apps', label: 'App Services', icon: LayoutGrid },
-    { id: 'Financials', label: 'Financials', icon: DollarSign },
-    { id: 'Users', label: 'Platform Admins', icon: UserCheck },
-    { id: 'Reports', label: 'System Audit', icon: Activity }
 ] as const;
 
 type NavSectionId = typeof NAV_OPTIONS[number]['id'];
 
-const SuperAdmin: React.FC<SuperAdminProps> = ({ integrationConfig, onToggleIntegration, businesses, onAddBusiness, onSwitchMerchant }) => {
+const SuperAdmin: React.FC<SuperAdminProps> = ({ integrationConfig, onToggleIntegration, businesses, onAddBusiness, onSwitchMerchant, employees }) => {
     const [activeSection, setActiveSection] = useState<NavSectionId>('Merchants');
     const [searchQuery, setSearchQuery] = useState('');
     
     const renderContent = () => {
         switch(activeSection) {
-            case 'Merchants': return <MerchantsSection businesses={businesses} onAddBusiness={onAddBusiness} onSwitchMerchant={onSwitchMerchant} />;
+            case 'Merchants': return <MerchantsSection businesses={businesses} employees={employees} integrationConfig={integrationConfig} onAddBusiness={onAddBusiness} onSwitchMerchant={onSwitchMerchant} />;
             case 'Governance': return <GovernanceSection />;
             case 'Subscriptions': return <SubscriptionsSection />;
-            case 'Apps': return <AppsSection integrationConfig={integrationConfig} onToggleIntegration={onToggleIntegration} />;
-            case 'Financials': return <FinancialsSection />;
-            case 'Reports': return <SystemAuditSection />;
+            case 'Plans': return <SubscriptionsSection />;
+            case 'Devices': return <PlatformModuleSection title="Devices" description="Manage platform appliance fleet and provisioning state." icon="devices" items={['Provisioned POS terminals', 'Device registration', 'Revocation and status']} />;
+            case 'MerchantUsers': return <PlatformModuleSection title="Merchant Users" description="Inspect merchant employee access and account status." icon="users" items={['Employee accounts', 'PIN access state', 'Permission assignments']} />;
+            case 'FeatureFlags': return <AppsSection integrationConfig={integrationConfig} onToggleIntegration={onToggleIntegration} />;
+            case 'CreditCardFee': return <FinancialsSection />;
+            case 'PlatformAudit': return <SystemAuditSection />;
+            case 'SystemHealth': return <PlatformModuleSection title="System Health" description="Monitor platform service readiness and runtime health." icon="health" items={['API Gateway', 'Authentication', 'Database', 'Sync and realtime transport']} />;
             case 'Users': return <PlatformUsersSection />;
             default:
-                return <MerchantsSection businesses={businesses} onAddBusiness={onAddBusiness} onSwitchMerchant={onSwitchMerchant} />;
+                return <MerchantsSection businesses={businesses} employees={employees} integrationConfig={integrationConfig} onAddBusiness={onAddBusiness} onSwitchMerchant={onSwitchMerchant} />;
         }
     };
 
