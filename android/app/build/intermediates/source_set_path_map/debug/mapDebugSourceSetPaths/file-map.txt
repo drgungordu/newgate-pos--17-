@@ -1,0 +1,48 @@
+com.newgate.pos.app-biometric-1.1.0-0 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/004e942b5e9ed27b45d1918c69548251/transformed/biometric-1.1.0/res
+com.newgate.pos.app-lifecycle-livedata-core-2.6.2-1 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/030873f37f5883ebdc656e87ebb9fe0f/transformed/lifecycle-livedata-core-2.6.2/res
+com.newgate.pos.app-lifecycle-process-2.6.2-2 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/0418fb2c0e0eb172c945a2c31b6f19d8/transformed/lifecycle-process-2.6.2/res
+com.newgate.pos.app-core-ktx-1.17.0-3 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/0818ec4c0c7afcf1a6d1b6c8a1376057/transformed/core-ktx-1.17.0/res
+com.newgate.pos.app-sqlite-framework-2.4.0-4 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/0975da8759ace7b2b9d507bbf8aaa479/transformed/sqlite-framework-2.4.0/res
+com.newgate.pos.app-security-crypto-1.1.0-alpha06-5 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/0f0e17b79f9e17be6775d5c64cbfc932/transformed/security-crypto-1.1.0-alpha06/res
+com.newgate.pos.app-transition-1.2.0-6 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/183b5e9b40b90fbb307a008d95f6c5bd/transformed/transition-1.2.0/res
+com.newgate.pos.app-annotation-experimental-1.4.1-7 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/1d2639a68fc6a206236d0aa367346f63/transformed/annotation-experimental-1.4.1/res
+com.newgate.pos.app-lifecycle-viewmodel-savedstate-2.6.2-8 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/1ff8ac58182f5f295b6cb3e4d8e60447/transformed/lifecycle-viewmodel-savedstate-2.6.2/res
+com.newgate.pos.app-core-1.17.0-9 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/2295b0f83bf7b80eee88b6027a246e57/transformed/core-1.17.0/res
+com.newgate.pos.app-savedstate-1.2.1-10 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/2aff286723250a0d4b37cb6a4e189479/transformed/savedstate-1.2.1/res
+com.newgate.pos.app-webkit-1.14.0-11 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/3031fbcb7bc17068723be299b6d564a2/transformed/webkit-1.14.0/res
+com.newgate.pos.app-lifecycle-viewmodel-2.6.2-12 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/3c364926a7f89ce33e0afe468b4a1544/transformed/lifecycle-viewmodel-2.6.2/res
+com.newgate.pos.app-core-viewtree-1.0.0-13 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/3f8ee8288185f50bf02727e00a5266e7/transformed/core-viewtree-1.0.0/res
+com.newgate.pos.app-material-1.11.0-14 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/4259b2a8492e8d6cef3cc28b81e1ea85/transformed/material-1.11.0/res
+com.newgate.pos.app-sqlcipher-android-4.17.0-15 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/53c3e03ebee9aba2ce61b57ea9bdf9cf/transformed/sqlcipher-android-4.17.0/res
+com.newgate.pos.app-room-ktx-2.6.1-16 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/58c7d87f24e6b52bd180ef1bb53719db/transformed/room-ktx-2.6.1/res
+com.newgate.pos.app-room-runtime-2.6.1-17 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/5dfad66cdfb57154f9459aae76857698/transformed/room-runtime-2.6.1/res
+com.newgate.pos.app-recyclerview-1.1.0-18 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/6b179f3d096586fd9093531338df1fd3/transformed/recyclerview-1.1.0/res
+com.newgate.pos.app-coordinatorlayout-1.3.0-19 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/6b5f19e7c986298fd76a56037cc062ed/transformed/coordinatorlayout-1.3.0/res
+com.newgate.pos.app-core-runtime-2.2.0-20 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/6ce74679922d5ebd8274b0eb1b645c17/transformed/core-runtime-2.2.0/res
+com.newgate.pos.app-activity-1.11.0-21 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/74ccdf9df29a46df67741d431a4cf714/transformed/activity-1.11.0/res
+com.newgate.pos.app-core-splashscreen-1.0.1-22 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/7c5d7ef1f087d2f514433992b3927cc5/transformed/core-splashscreen-1.0.1/res
+com.newgate.pos.app-emoji2-1.3.0-23 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/800929a224886522ff6939bfa0a23251/transformed/emoji2-1.3.0/res
+com.newgate.pos.app-appcompat-resources-1.7.1-24 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/89e9b78e9ad753f73899207dff4f9ab7/transformed/appcompat-resources-1.7.1/res
+com.newgate.pos.app-emoji2-views-helper-1.3.0-25 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/8d330b231723f4e34a4c7da3eb038c40/transformed/emoji2-views-helper-1.3.0/res
+com.newgate.pos.app-startup-runtime-1.1.1-26 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/8db7c351a24f03065c4bf094021eaeb5/transformed/startup-runtime-1.1.1/res
+com.newgate.pos.app-sqlite-2.4.0-27 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/916ce867b525615ee622944a8854e2ea/transformed/sqlite-2.4.0/res
+com.newgate.pos.app-tracing-1.2.0-28 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/944a3e4b1ccb014082de8bcdad2de2ea/transformed/tracing-1.2.0/res
+com.newgate.pos.app-drawerlayout-1.1.1-29 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/a6caa7ac3eaa83db0bb314542b951676/transformed/drawerlayout-1.1.1/res
+com.newgate.pos.app-appcompat-1.7.1-30 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/a727d34b051c7805906d422acb23cc06/transformed/appcompat-1.7.1/res
+com.newgate.pos.app-profileinstaller-1.4.0-31 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/ba9d6b234b5221275c8a96e1c7f04828/transformed/profileinstaller-1.4.0/res
+com.newgate.pos.app-cardview-1.0.0-32 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/bd833e0b8d783384908d8e91669b7480/transformed/cardview-1.0.0/res
+com.newgate.pos.app-fragment-1.8.9-33 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/dc0f8aca1329c5baf04b49dc9e614745/transformed/fragment-1.8.9/res
+com.newgate.pos.app-lifecycle-livedata-2.6.2-34 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/e4fd53fa3e10c3c2a8bd5d3d195a10f0/transformed/lifecycle-livedata-2.6.2/res
+com.newgate.pos.app-core-8.5.2-35 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/e86d8b55c2fe61922a8f0bbda8736d6e/transformed/core-8.5.2/res
+com.newgate.pos.app-lifecycle-runtime-2.6.2-36 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/ead7b9555160700a1027f063916fcdb5/transformed/lifecycle-runtime-2.6.2/res
+com.newgate.pos.app-viewpager2-1.0.0-37 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/f332f85fd1b5c635e0fbfcef517e0828/transformed/viewpager2-1.0.0/res
+com.newgate.pos.app-constraintlayout-2.1.4-38 /Users/selamigungordu/.gradle/caches/8.11.1/transforms/fbf977c1c7f93e894aea47dad054bf62/transformed/constraintlayout-2.1.4/res
+com.newgate.pos.app-pngs-39 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/build/generated/res/pngs/debug
+com.newgate.pos.app-resValues-40 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/build/generated/res/resValues/debug
+com.newgate.pos.app-packageDebugResources-41 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.newgate.pos.app-packageDebugResources-42 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.newgate.pos.app-debug-43 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.newgate.pos.app-debug-44 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/src/debug/res
+com.newgate.pos.app-main-45 /Users/selamigungordu/Downloads/newgate-pos (17)/android/app/src/main/res
+com.newgate.pos.app-debug-46 /Users/selamigungordu/Downloads/newgate-pos (17)/node_modules/@capacitor-community/sqlite/android/build/intermediates/packaged_res/debug/packageDebugResources
+com.newgate.pos.app-debug-47 /Users/selamigungordu/Downloads/newgate-pos (17)/node_modules/@capacitor/android/capacitor/build/intermediates/packaged_res/debug/packageDebugResources

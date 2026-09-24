@@ -1,0 +1,74 @@
+[
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/drawable_newgate_pos_logo_1790118872266.jpg.flat",
+        "source": "com.newgate.pos.app-main-45:/drawable/newgate_pos_logo_1790118872266.jpg"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.newgate.pos.app-main-45:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.newgate.pos.app-main-45:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/xml_device_admin_receiver.xml.flat",
+        "source": "com.newgate.pos.app-main-45:/xml/device_admin_receiver.xml"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/xml_config.xml.flat",
+        "source": "com.newgate.pos.app-main-45:/xml/config.xml"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/drawable_ic_pos_logo.png.flat",
+        "source": "com.newgate.pos.app-main-45:/drawable/ic_pos_logo.png"
+    },
+    {
+        "merged": "com.newgate.pos.app-debug-43:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.newgate.pos.app-main-45:/mipmap-mdpi/ic_launcher_round.png"
+    }
+]

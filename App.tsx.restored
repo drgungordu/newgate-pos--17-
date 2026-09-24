@@ -1,0 +1,871 @@
+
+import React, { useState, useEffect } from 'react';
+import {
+  UserRole, Employee, DetailedOrder, Transaction, Customer, InventoryItem, Category,
+  Table, Reservation, Schedule, DiningTable, KDSSettings, AppIntegrationConfig,
+  DiscountCode, FloorPlan, GlobalTaxConfig, TipConfig, KitchenTicket, Notification, Business,
+  DiningOrderItem, CartItem, CashLogEntry, Invoice, RecurringPlan
+} from './types';
+import {
+  MOCK_EMPLOYEES, MOCK_DETAILED_ORDERS, MOCK_TRANSACTIONS, MOCK_CUSTOMERS,
+  MOCK_INVENTORY_ITEMS, MOCK_CATEGORIES, MOCK_TABLES, MOCK_RESERVATIONS,
+  MOCK_SCHEDULES, MOCK_FLOOR_TABLES, MOCK_KDS_SETTINGS, MOCK_HOURLY_SALES,
+  MOCK_SALES_SUMMARY, MOCK_DEPOSITS, MOCK_TAX_REPORTS, MOCK_DISCOUNTS,
+  MOCK_CASH_LOGS, MOCK_STATEMENTS, MOCK_REPORT_REQUESTS, MOCK_REVENUE_ITEMS,
+  MOCK_FLOOR_PLAN, MOCK_RECEIPT_SETTINGS, MOCK_TIP_CONFIG, MOCK_KITCHEN_TICKETS,
+  MOCK_BUSINESSES, MOCK_INVOICES, MOCK_RECURRING_PLANS
+} from './constants';
+
+// Component Imports
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import CashierPOS from './components/CashierPOS';
+import Orders from './components/Orders';
+import Transactions from './components/Transactions';
+import CashLog from './components/CashLog';
+import Invoices from './components/Invoices';
+import RecurringPayments from './components/RecurringPayments';
+import SalesReports from './components/SalesReports';
+import EmployeeSalesReport from './components/EmployeeSalesReport';
+import GiftCardReport from './components/GiftCardReport';
+import RemovedItems from './components/RemovedItems';
+import ItemSales from './components/ItemSales';
+import PeerInsights from './components/PeerInsights';
+import FinancesOverview from './components/FinancesOverview';
+import Closeout from './components/Closeout';
+import Deposits from './components/Deposits';
+import Disputes from './components/Disputes';
+import PayBills from './components/PayBills';
+import Documents from './components/Documents';
+import Items from './components/Items';
+import Categories from './components/Categories';
+import ModifierGroups from './components/ModifierGroups';
+import PrinterLabels from './components/PrinterLabels';
+import Discounts from './components/Discounts';
+import Employees from './components/Employees';
+import Customers from './components/Customers';
+import DiningDashboard from './components/DiningDashboard';
+import KitchenDisplay from './components/KitchenDisplay';
+import Settings from './components/Settings';
+import SuperAdmin from './components/SuperAdmin';
+import ReceiptFeedback from './components/ReceiptFeedback';
+import SchedulingApp from './components/SchedulingApp';
+
+// Icons
+import {
+  LayoutDashboard, ShoppingCart, Activity, FileBarChart, DollarSign,
+  Package, Users, User, MoreHorizontal, LogOut, ChevronDown, ChevronRight,
+  Menu, X, ChefHat, Utensils, Bell, HelpCircle, Settings as SettingsIcon,
+  CreditCard, Shield, Briefcase, Coffee, Calendar, RefreshCw
+} from 'lucide-react';
+
+// URL Routing Helper
+const getUrlPath = () => window.location.pathname;
+
+// Helper: Generate Unique 10-char Order ID (Alphanumeric)
+const generateOrderId = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let result = '';
+    for (let i = 0; i < 10; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+};
+
+const App: React.FC = () => {
+  const [currentPath, setCurrentPath] = useState(getUrlPath());
+
+  // --- GLOBAL STATE ---
+  const [currentUser, setCurrentUser] = useState<Employee | null>(null);
+  
+  // Architecture: Multi-Tenant Support
+  const [businesses, setBusinesses] = useState<Business[]>(MOCK_BUSINESSES);
+
+  // Data State
+  const [orders, setOrders] = useState<DetailedOrder[]>(MOCK_DETAILED_ORDERS);
+  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
+  const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
+  const [employeesState, setEmployeesState] = useState<Employee[]>(MOCK_EMPLOYEES);
+  const [inventory, setInventory] = useState<InventoryItem[]>(MOCK_INVENTORY_ITEMS);
+  const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
+  const [discounts, setDiscounts] = useState<DiscountCode[]>(MOCK_DISCOUNTS);
+  const [reservations, setReservations] = useState<Reservation[]>(MOCK_RESERVATIONS);
+  
+  // Financial State
+  const [cashLogs, setCashLogs] = useState<CashLogEntry[]>(MOCK_CASH_LOGS);
+  const [invoices, setInvoices] = useState<Invoice[]>(MOCK_INVOICES); 
+  const [recurringPlans, setRecurringPlans] = useState<RecurringPlan[]>(MOCK_RECURRING_PLANS);
+
+  // Kitchen & Notification State
+  const [activeTickets, setActiveTickets] = useState<KitchenTicket[]>(MOCK_KITCHEN_TICKETS);
+  const [serverNotifications, setServerNotifications] = useState<Notification[]>([]);
+
+  // Advanced Module State (Persistent POS State)
+  const [floorPlanTables, setFloorPlanTables] = useState<DiningTable[]>(MOCK_FLOOR_TABLES);
+  const [activeTableOrders, setActiveTableOrders] = useState<Record<string, { items: DiningOrderItem[], guests: {id: number, name?: string}[] }>>({});
+  const [registerCart, setRegisterCart] = useState<CartItem[]>([]);
+  const [currentRegisterOrderId, setCurrentRegisterOrderId] = useState<string | null>(null);
+
+  const [kdsSettings, setKdsSettings] = useState<KDSSettings>(MOCK_KDS_SETTINGS);
+  const [integrationConfig, setIntegrationConfig] = useState<AppIntegrationConfig>({
+      reservation_pos: true,
+      scheduling_pos: false,
+      scheduling_reservation: false,
+      kdsEnabled: MOCK_KDS_SETTINGS.isEnabled, 
+  });
+  const [receiptSettings, setReceiptSettings] = useState(MOCK_RECEIPT_SETTINGS);
+
+  // Business Operations State
+  const [taxConfig, setTaxConfig] = useState<GlobalTaxConfig>({ rate: 8.25, name: 'Sales Tax', enabled: true, includeInPrice: false });
+  const [tipConfig, setTipConfig] = useState<TipConfig>(MOCK_TIP_CONFIG);
+
+  // Navigation State
+  const [activeTab, setActiveTab] = useState('Home');
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  
+  // Role Switcher State
+  const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
+
+  // --- EFFECTS ---
+  useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Update KDS enabled state in integrationConfig when kdsSettings changes
+  useEffect(() => {
+    setIntegrationConfig(prev => ({...prev, kdsEnabled: kdsSettings.isEnabled}));
+  }, [kdsSettings.isEnabled]);
+
+  // Manage Register Order ID logic
+  useEffect(() => {
+      if (registerCart.length > 0 && !currentRegisterOrderId) {
+          setCurrentRegisterOrderId(generateOrderId());
+      } else if (registerCart.length === 0) {
+          setCurrentRegisterOrderId(null);
+      }
+  }, [registerCart, currentRegisterOrderId]);
+
+  // --- ACTIONS ---
+  const handleLogin = (user: Employee) => {
+    setCurrentUser(user);
+    const posOnlyRoles = ['Server Lead', 'Server', 'Host', 'Employee', UserRole.CASHIER, UserRole.STAFF];
+    
+    if (posOnlyRoles.includes(user.role)) {
+      setActiveTab('New Sale'); // Direct POS-only roles to POS App Launcher
+    } else if (user.role === UserRole.SUPER_ADMIN) {
+      setActiveTab('SuperAdmin');
+    } else {
+      setActiveTab('Home');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setActiveTab('Login');
+    setIsProfileMenuOpen(false);
+  };
+
+  const handleSwitchRole = (roleName: string) => {
+      // Find valid user for role
+      const user = employeesState.find(u => u.role === roleName) || MOCK_EMPLOYEES.find(u => u.role === roleName);
+      
+      if (user) {
+          handleLogin(user);
+          setShowRoleSwitcher(false);
+          setIsProfileMenuOpen(false);
+      } else {
+          if (roleName === UserRole.SUPER_ADMIN) {
+             const sa = MOCK_EMPLOYEES.find(u => u.role === UserRole.SUPER_ADMIN);
+             if (sa) {
+                 handleLogin(sa);
+                 setShowRoleSwitcher(false);
+                 setIsProfileMenuOpen(false);
+                 return;
+             }
+          }
+          alert(`No user found with role: ${roleName}`);
+      }
+  };
+
+  const handleProcessSale = (cart: any[], total: number, paymentMethod: string = 'Card', existingOrderId?: string) => {
+    const newOrder: DetailedOrder = {
+      id: existingOrderId || currentRegisterOrderId || generateOrderId(),
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+      total: total,
+      status: 'Paid',
+      paymentMethod: paymentMethod as any, 
+      employeeName: currentUser?.name || 'Staff',
+      device: 'Main Register',
+      type: 'Dine-in', 
+      items: cart
+    };
+    
+    setOrders([newOrder, ...orders]);
+    setTransactions([{
+      id: `TRX-${Date.now()}`,
+      date: new Date().toLocaleDateString(),
+      amount: total,
+      type: 'Sale',
+      method: paymentMethod as any, 
+      employeeId: currentUser?.id || 'E001'
+    }, ...transactions]);
+    
+    // Clear register cart after sale, which will auto-clear the registerOrderId via effect
+    setRegisterCart([]); 
+  };
+
+  const handleUpdateTableOrder = (tableId: string, data: { items: DiningOrderItem[], guests: {id: number, name?: string}[] } | undefined) => {
+      setActiveTableOrders(prev => {
+          if (data === undefined) {
+              const next = { ...prev };
+              delete next[tableId];
+              return next;
+          }
+          return { ...prev, [tableId]: data };
+      });
+  };
+
+  const handleUpdateTableStatus = (updatedTable: DiningTable) => {
+      setFloorPlanTables(prev => prev.map(t => t.id === updatedTable.id ? updatedTable : t));
+  };
+
+  // --- DATA MANAGEMENT HANDLERS ---
+  const handleSaveItem = (item: InventoryItem) => {
+      setInventory(prev => {
+          const index = prev.findIndex(i => i.id === item.id);
+          if (index >= 0) {
+              const newItems = [...prev];
+              newItems[index] = item;
+              return newItems;
+          }
+          return [...prev, item];
+      });
+  };
+
+  const handleDeleteItem = (id: string) => {
+      setInventory(prev => prev.filter(i => i.id !== id));
+  };
+
+  const handleAddCustomer = (customer: Customer) => {
+      setCustomers(prev => [customer, ...prev]);
+  };
+
+  const handleAddInvoice = (invoice: any) => {
+      setInvoices(prev => [invoice, ...prev]);
+  };
+
+  const handleAddRecurringPlan = (plan: any) => {
+      setRecurringPlans(prev => [plan, ...prev]);
+  };
+
+  const handleAddCashLog = (log: CashLogEntry) => {
+      setCashLogs(prev => [log, ...prev]);
+  };
+
+  const handleUpdateReservation = (updatedRes: Reservation) => {
+      setReservations(prev => prev.map(r => r.id === updatedRes.id ? updatedRes : r));
+  };
+
+  // --- ARCHITECTURE: EMPLOYEE MANAGEMENT ---
+  const handleAddEmployee = (emp: Employee) => {
+    const linkedEmployee = {
+        ...emp,
+        businessId: currentUser?.businessId
+    };
+    setEmployeesState([...employeesState, linkedEmployee]);
+  };
+
+  const handleUpdateEmployee = (updatedEmp: Employee) => {
+    setEmployeesState(prev => prev.map(emp => emp.id === updatedEmp.id ? updatedEmp : emp));
+  };
+
+  const handleDeleteEmployee = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this employee?")) {
+        setEmployeesState(prev => prev.filter(emp => emp.id !== id));
+    }
+  };
+
+  // --- ARCHITECTURE: SUPER ADMIN FUNCTIONS ---
+  const handleAddBusiness = (biz: Business, owner: Partial<Employee>) => {
+      const newBusiness = { ...biz, id: `B-${Date.now()}` };
+      setBusinesses(prev => [...prev, newBusiness]);
+
+      const newOwner: Employee = {
+          id: `E-${Date.now()}`,
+          name: owner.name || 'Admin',
+          email: owner.email || '',
+          passcode: owner.passcode || '1234',
+          role: UserRole.BUSINESS_ADMIN,
+          businessId: newBusiness.id,
+          status: 'Active',
+          hourlyRate: 0,
+          hoursWorked: 0,
+          deviceAccess: true
+      };
+      setEmployeesState(prev => [...prev, newOwner]);
+  };
+
+  const handleSaveFloorPlan = (tables: DiningTable[]) => {
+    setFloorPlanTables(tables);
+  };
+
+  // KDS & Notification Logic
+  const handleFireToKitchen = (ticket: KitchenTicket) => {
+    setActiveTickets(prev => [...prev, ticket]);
+  };
+
+  const handleTicketStatusChange = (ticketId: string, status: KitchenTicket['status']) => {
+    setActiveTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status } : t));
+
+    if (status === 'Ready' || status === 'Delivered') {
+        const ticket = activeTickets.find(t => t.id === ticketId);
+        if (ticket && ticket.serverEmployeeId) {
+            const notification: Notification = {
+                id: `NOTIF-${Date.now()}`,
+                type: 'OrderReady',
+                message: `Order #${ticket.orderId.split('-')[1] || ticket.orderId} for ${ticket.table || 'Takeout'} is ${status}!`,
+                targetEmployeeId: ticket.serverEmployeeId,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            setServerNotifications(prev => [notification, ...prev]);
+        }
+    }
+  };
+
+  const handleDismissNotification = (id: string) => {
+      setServerNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  // --- HELPER: Merge Open Table & Register Orders for View ---
+  const getMergedOrders = () => {
+      // 1. Table Orders
+      const openTableOrders: DetailedOrder[] = floorPlanTables
+          .filter(t => t.status === 'Occupied' && activeTableOrders[t.id])
+          .map(t => {
+              const orderData = activeTableOrders[t.id];
+              const total = orderData.items.reduce((sum, i) => sum + (i.price * i.quantity), 0) * (1 + taxConfig.rate/100);
+              
+              return {
+                  id: t.orderId || `TEMP-${t.id}`,
+                  date: new Date().toLocaleDateString(),
+                  time: t.timeSeated ? new Date(t.timeSeated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '',
+                  total: total,
+                  status: 'Open', 
+                  paymentMethod: 'Card', 
+                  employeeName: t.assignedToName || 'Server',
+                  device: 'Table Service',
+                  type: 'Dine-in',
+                  items: orderData.items
+              } as DetailedOrder;
+          });
+
+      // 2. Register Active Order
+      const openRegisterOrder: DetailedOrder[] = [];
+      if (registerCart.length > 0 && currentRegisterOrderId) {
+          const regTotal = registerCart.reduce((sum, i) => sum + (i.price * i.quantity), 0) * (1 + taxConfig.rate/100);
+          openRegisterOrder.push({
+              id: currentRegisterOrderId,
+              date: new Date().toLocaleDateString(),
+              time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+              total: regTotal,
+              status: 'Open',
+              paymentMethod: 'Card', // Placeholder
+              employeeName: currentUser?.name || 'Cashier',
+              device: 'Main Register',
+              type: 'Dine-in',
+              items: registerCart
+          } as DetailedOrder);
+      }
+
+      return [...openRegisterOrder, ...openTableOrders, ...orders];
+  };
+
+
+  // --- NAVIGATION CONFIG ---
+  const menuItems = [
+    { id: 'New Sale', label: 'New Sale', icon: <ShoppingCart size={20} />, action: () => setActiveTab('New Sale') },
+    { id: 'Home', label: 'Home', icon: <LayoutDashboard size={20} />, action: () => setActiveTab('Home') },
+    { 
+      id: 'Sales Activity', label: 'Sales Activity', icon: <Activity size={20} />, 
+      subItems: ['Orders', 'Transactions', 'Cash Log', 'Invoices', 'Recurring Payments'] 
+    },
+    { 
+      id: 'Reports', label: 'Reports', icon: <FileBarChart size={20} />, 
+      subItems: ['Sales Report', 'Employee Sales', 'Peer Insights', 'Item Sales', 'Removed Items', 'Tender Types', 'Discounts Report', 'Gift Cards Report', 'Requested Reports'] 
+    },
+    { 
+      id: 'Finances', label: 'Finances', icon: <DollarSign size={20} />, 
+      subItems: ['Overview', 'Closeout', 'Deposits', 'Statements', 'Taxes', 'Disputes', 'Pay Bills'] 
+    },
+    { 
+      id: 'Items', label: 'Items', icon: <Package size={20} />, 
+      subItems: ['Item Library', 'Categories', 'Modifier Groups', 'Printer Labels', 'Discounts'] 
+    },
+    { 
+      id: 'Employees', label: 'Employees', icon: <Users size={20} />, 
+      subItems: ['Employee List', 'Schedule', 'Time Clock'] 
+    },
+    { 
+      id: 'Customers', label: 'Customers', icon: <User size={20} />, 
+      subItems: ['Customer List', 'Feedback'] 
+    },
+    { 
+      id: 'More', label: 'More', icon: <MoreHorizontal size={20} />, 
+      subItems: ['Byte Dinning', 'App Market'] 
+    },
+  ];
+
+  // --- RENDER HELPERS ---
+  const toggleSubMenu = (id: string) => {
+    setExpandedMenu(expandedMenu === id ? null : id);
+  };
+
+  const renderSidebar = () => (
+    <aside className={`bg-slate-900 text-slate-300 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'} shrink-0 h-screen overflow-hidden`}>
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        {isSidebarOpen && <span className="font-bold text-white text-lg tracking-tight">OmniCommand</span>}
+        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white">
+          <Menu size={20} />
+        </button>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+        {menuItems.map((item) => (
+          <div key={item.id}>
+            {item.subItems ? (
+              <>
+                <button
+                  onClick={() => isSidebarOpen ? toggleSubMenu(item.id) : setActiveTab(item.subItems[0])}
+                  className={`w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800 hover:text-white transition-colors
+                    ${activeTab === item.id || (item.subItems && item.subItems.includes(activeTab)) ? 'text-white bg-slate-800' : ''}`}
+                >
+                  <div className="flex items-center gap-3">
+                    {item.icon}
+                    {isSidebarOpen && <span className="font-medium text-sm">{item.label}</span>}
+                  </div>
+                  {isSidebarOpen && (
+                    expandedMenu === item.id ? <ChevronDown size={16} /> : <ChevronRight size={16} />
+                  )}
+                </button>
+                
+                {isSidebarOpen && expandedMenu === item.id && (
+                  <div className="bg-slate-950 py-1">
+                    {item.subItems.map((sub) => (
+                      <button
+                        key={sub}
+                        onClick={() => setActiveTab(sub)}
+                        className={`w-full text-left pl-12 pr-4 py-2 text-sm hover:text-white transition-colors
+                          ${activeTab === sub ? 'text-indigo-400 font-medium' : 'text-slate-500'}`}
+                      >
+                        {sub}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <button
+                onClick={item.action}
+                className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-800 hover:text-white transition-colors
+                  ${activeTab === item.id ? 'text-white bg-slate-800 border-l-4 border-indigo-500' : ''}`}
+              >
+                {item.icon}
+                {isSidebarOpen && <span className="font-medium text-sm">{item.label}</span>}
+              </button>
+            )}
+          </div>
+        ))}
+      </nav>
+
+      <div className="p-4 border-t border-slate-800">
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+          <LogOut size={20} />
+          {isSidebarOpen && <span className="font-medium text-sm">Sign Out</span>}
+        </button>
+      </div>
+    </aside>
+  );
+
+  const renderRoleSwitcher = () => (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-scale-in">
+              <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                  <h3 className="font-black text-xl text-slate-800 tracking-tight">Switch Role</h3>
+                  <button onClick={() => setShowRoleSwitcher(false)} className="hover:bg-slate-200 rounded-full p-2 transition-colors">
+                      <X size={24} className="text-slate-400" />
+                  </button>
+              </div>
+              <div className="p-6 grid grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
+                  {[
+                      { role: 'Admin', icon: <Shield size={20} />, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                      { role: 'Manager', icon: <Briefcase size={20} />, color: 'text-purple-600', bg: 'bg-purple-50' },
+                      { role: 'Server Lead', icon: <Users size={20} />, color: 'text-orange-600', bg: 'bg-orange-50' },
+                      { role: 'Server', icon: <Coffee size={20} />, color: 'text-blue-600', bg: 'bg-blue-50' },
+                      { role: 'Host', icon: <Calendar size={20} />, color: 'text-rose-600', bg: 'bg-rose-50' },
+                      { role: 'Employee', icon: <User size={20} />, color: 'text-slate-600', bg: 'bg-slate-100' },
+                      { role: UserRole.SUPER_ADMIN, label: 'Platform Owner', icon: <Shield size={20} />, color: 'text-amber-600', bg: 'bg-amber-50' },
+                  ].map((roleItem, idx) => (
+                      <button 
+                          key={idx}
+                          onClick={() => handleSwitchRole(roleItem.role)}
+                          className="flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-slate-100 hover:border-indigo-500 hover:bg-slate-50 transition-all group"
+                      >
+                          <div className={`p-4 rounded-xl ${roleItem.bg} ${roleItem.color} group-hover:scale-110 transition-transform`}>
+                              {roleItem.icon}
+                          </div>
+                          <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{roleItem.label || roleItem.role}</span>
+                      </button>
+                  ))}
+              </div>
+          </div>
+      </div>
+  );
+
+  const renderContent = () => {
+    // --- SECURITY FILTERING ---
+    const filteredEmployees = currentUser?.role === UserRole.SUPER_ADMIN 
+        ? employeesState 
+        : employeesState.filter(e => e.businessId === currentUser?.businessId);
+
+    switch(activeTab) {
+      // Core
+      case 'Home': return <Dashboard hourlySales={MOCK_HOURLY_SALES} salesSummary={MOCK_SALES_SUMMARY} />;
+      case 'New Sale': return (
+        <CashierPOS 
+          onLogout={() => setActiveTab('Home')} 
+          onProcessSale={handleProcessSale}
+          currentUser={currentUser!}
+          sharedOrders={orders}
+          sharedTransactions={transactions}
+          sharedCustomers={customers}
+          sharedEmployees={filteredEmployees}
+          sharedInventory={inventory}
+          sharedCategories={categories}
+          sharedDiscounts={discounts}
+          sharedTables={MOCK_TABLES}
+          sharedReservations={reservations}
+          sharedSchedules={MOCK_SCHEDULES}
+          onSeatReservation={(resId, tableId) => console.log('Seat', resId, tableId)}
+          integrationConfig={integrationConfig}
+          floorPlanTables={floorPlanTables}
+          // PASS PERSISTENT STATE PROPS
+          activeTableOrders={activeTableOrders}
+          onUpdateTableOrder={handleUpdateTableOrder}
+          onUpdateTableStatus={handleUpdateTableStatus}
+          activeRegisterCart={registerCart}
+          onUpdateRegisterCart={setRegisterCart}
+          onAddCustomer={handleAddCustomer}
+          // END PERSISTENT STATE PROPS
+          kdsSettings={kdsSettings}
+          receiptSettings={receiptSettings}
+          onFireToKitchen={handleFireToKitchen}
+          taxConfig={taxConfig}
+          tipConfig={tipConfig}
+          onNavigate={(tab) => setActiveTab(tab)}
+          notifications={serverNotifications}
+          onDismissNotification={handleDismissNotification}
+          kitchenTickets={activeTickets}
+          onKitchenStatusChange={handleTicketStatusChange}
+          onAddCashLog={handleAddCashLog}
+          onUpdateReservation={handleUpdateReservation}
+          onUpdateInventory={handleSaveItem}
+          currentRegisterOrderId={currentRegisterOrderId}
+        />
+      );
+
+      // Sales Activity
+      case 'Orders': return <Orders orders={getMergedOrders()} />;
+      case 'Transactions': return <Transactions transactions={transactions} />;
+      case 'Cash Log': return <CashLog logs={cashLogs} />;
+      case 'Invoices': return <Invoices invoices={invoices} onAddInvoice={handleAddInvoice} />;
+      case 'Recurring Payments': return <RecurringPayments plans={recurringPlans} onAddPlan={handleAddRecurringPlan} />;
+
+      // Reports
+      case 'Sales Report': return <SalesReports salesData={MOCK_SALES_SUMMARY} deposits={MOCK_DEPOSITS} taxReports={MOCK_TAX_REPORTS} initialTab="Daily Sales" />;
+      case 'Employee Sales': return <EmployeeSalesReport />;
+      case 'Peer Insights': return <PeerInsights totalSales={145000} transactionCount={1200} customers={customers} />;
+      case 'Item Sales': return <ItemSales />;
+      case 'Removed Items': return <RemovedItems />;
+      case 'Tender Types': return <SalesReports salesData={MOCK_SALES_SUMMARY} deposits={MOCK_DEPOSITS} taxReports={MOCK_TAX_REPORTS} initialTab="Tender Types" />;
+      case 'Discounts Report': return <SalesReports salesData={MOCK_SALES_SUMMARY} deposits={MOCK_DEPOSITS} taxReports={MOCK_TAX_REPORTS} initialTab="Overview" />;
+      case 'Gift Cards Report': return <GiftCardReport />;
+      case 'Requested Reports': return <Documents statements={MOCK_STATEMENTS} reports={MOCK_REPORT_REQUESTS} />;
+
+      // Finances
+      case 'Overview': return <FinancesOverview />;
+      case 'Closeout': return <Closeout />;
+      case 'Deposits': return <Deposits />;
+      case 'Statements': return <Documents statements={MOCK_STATEMENTS} reports={MOCK_REPORT_REQUESTS} />;
+      case 'Taxes': return <SalesReports salesData={MOCK_SALES_SUMMARY} deposits={MOCK_DEPOSITS} taxReports={MOCK_TAX_REPORTS} initialTab="Tax" />;
+      case 'Disputes': return <Disputes />;
+      case 'Pay Bills': return <PayBills />;
+
+      // Items
+      case 'Item Library': return <Items items={inventory} onSaveItem={handleSaveItem} onDeleteItem={handleDeleteItem} />;
+      case 'Categories': return (
+          <Categories 
+            categories={categories} 
+            setCategories={setCategories} 
+            inventory={inventory} 
+            setInventory={setInventory}
+          />
+      );
+      case 'Modifier Groups': return <ModifierGroups />;
+      case 'Printer Labels': return <PrinterLabels />;
+      case 'Discounts': return <Discounts discounts={discounts} setDiscounts={setDiscounts} />;
+
+      // Employees
+      case 'Employee List': return (
+        <Employees 
+            employees={filteredEmployees}
+            onAddEmployee={handleAddEmployee} 
+            onUpdateEmployee={handleUpdateEmployee}
+            onDeleteEmployee={handleDeleteEmployee}
+        />
+      );
+      case 'Schedule': return <SchedulingApp schedules={MOCK_SCHEDULES} />;
+      case 'Time Clock': return <SchedulingApp schedules={MOCK_SCHEDULES} />;
+
+      // Customers
+      case 'Customer List': return <Customers customers={customers} onAddCustomer={handleAddCustomer} />;
+      case 'Feedback': return <div className="p-8 text-center text-slate-500">Feedback Dashboard Coming Soon</div>;
+
+      // More / Apps
+      case 'Byte Dinning': return (
+        <DiningDashboard 
+          initialTables={floorPlanTables} 
+          onSaveFloorPlan={handleSaveFloorPlan} 
+        />
+      );
+      case 'App Market': return <div className="p-8 text-center text-slate-500">App Market Coming Soon</div>;
+      case 'Settings': return (
+        <Settings 
+            taxConfig={taxConfig}
+            setTaxConfig={setTaxConfig}
+            tipConfig={tipConfig}
+            setTipConfig={setTipConfig}
+            onNavigate={(tab) => setActiveTab(tab)}
+        />
+      );
+
+      default: return <Dashboard hourlySales={MOCK_HOURLY_SALES} salesSummary={MOCK_SALES_SUMMARY} />;
+    }
+  };
+
+  // --- ROUTING LOGIC ---
+  if (currentPath === '/feedback') {
+    return <ReceiptFeedback />;
+  }
+
+  if (currentPath === '/kitchen') {
+    return (
+        <KitchenDisplay 
+            settings={kdsSettings} 
+            liveTickets={activeTickets}
+            onUpdateStatus={handleTicketStatusChange}
+        />
+    );
+  }
+
+  if (!currentUser) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  // --- SUPER ADMIN VIEW ---
+  if (currentUser.role === UserRole.SUPER_ADMIN) {
+    return (
+        <div className="bg-slate-100 min-h-screen p-4">
+            {showRoleSwitcher && renderRoleSwitcher()}
+            <div className="max-w-7xl mx-auto space-y-4">
+                <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <h1 className="font-bold text-slate-800 text-lg">OmniCommand Super Admin</h1>
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => setShowRoleSwitcher(true)} className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-bold text-sm">
+                            <RefreshCw size={16} /> Switch Role
+                        </button>
+                        <div className="h-4 w-px bg-slate-200"></div>
+                        <button onClick={handleLogout} className="text-slate-500 hover:text-red-600 font-medium text-sm">Sign Out</button>
+                    </div>
+                </div>
+                <SuperAdmin 
+                    integrationConfig={integrationConfig} 
+                    onToggleIntegration={(key) => {
+                        setIntegrationConfig(prev => ({...prev, [key]: !prev[key]}));
+                        if (key === 'kdsEnabled') {
+                            setKdsSettings(prev => ({...prev, isEnabled: !prev.isEnabled}));
+                        }
+                    }}
+                    businesses={businesses}
+                    onAddBusiness={handleAddBusiness}
+                />
+            </div>
+        </div>
+    );
+  }
+
+  // --- ACCESS POLICY: LOCK-IN FOR STAFF ROLES ---
+  const posOnlyRoles = ['Server Lead', 'Server', 'Host', 'Employee', UserRole.CASHIER, UserRole.STAFF];
+  if (posOnlyRoles.includes(currentUser.role)) {
+    return (
+        <>
+            {showRoleSwitcher && renderRoleSwitcher()}
+            <CashierPOS 
+              onLogout={handleLogout} 
+              onProcessSale={handleProcessSale}
+              currentUser={currentUser}
+              sharedOrders={orders}
+              sharedTransactions={transactions}
+              sharedCustomers={customers}
+              sharedEmployees={employeesState.filter(e => e.businessId === currentUser.businessId)}
+              sharedInventory={inventory}
+              sharedCategories={categories}
+              sharedDiscounts={discounts}
+              sharedTables={MOCK_TABLES}
+              sharedReservations={reservations}
+              sharedSchedules={MOCK_SCHEDULES}
+              onSeatReservation={(resId, tableId) => console.log('Seat', resId, tableId)}
+              integrationConfig={integrationConfig}
+              floorPlanTables={floorPlanTables}
+              // PASS PERSISTENT STATE PROPS
+              activeTableOrders={activeTableOrders}
+              onUpdateTableOrder={handleUpdateTableOrder}
+              onUpdateTableStatus={handleUpdateTableStatus}
+              activeRegisterCart={registerCart}
+              onUpdateRegisterCart={setRegisterCart}
+              onAddCustomer={handleAddCustomer}
+              // END PERSISTENT STATE PROPS
+              kdsSettings={kdsSettings}
+              receiptSettings={receiptSettings}
+              onFireToKitchen={handleFireToKitchen}
+              taxConfig={taxConfig}
+              tipConfig={tipConfig}
+              onNavigate={(tab) => {
+                  if (tab === 'SwitchRole') setShowRoleSwitcher(true);
+                  else setActiveTab(tab);
+              }}
+              notifications={serverNotifications}
+              onDismissNotification={handleDismissNotification}
+              kitchenTickets={activeTickets}
+              onKitchenStatusChange={handleTicketStatusChange}
+              onAddCashLog={handleAddCashLog}
+              onUpdateReservation={handleUpdateReservation}
+              onUpdateInventory={handleSaveItem}
+              currentRegisterOrderId={currentRegisterOrderId}
+            />
+        </>
+    );
+  }
+
+  return (
+    <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
+      {showRoleSwitcher && renderRoleSwitcher()}
+      {renderSidebar()}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-20 shadow-sm relative">
+            <h2 className="font-bold text-lg text-slate-800">{activeTab}</h2>
+            
+            <div className="flex items-center gap-6">
+                {/* Utility Actions Icons */}
+                <div className="flex items-center gap-3 border-r border-slate-200 pr-6 mr-2">
+                    <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-all relative" title="Notifications">
+                        <Bell size={20} />
+                        {serverNotifications.length > 0 && <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border-2 border-white"></span>}
+                    </button>
+                    <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-all" title="Help & Documentation">
+                        <HelpCircle size={20} />
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('Settings')}
+                        className={`p-2 rounded-lg transition-all ${activeTab === 'Settings' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-100'}`} 
+                        title="Settings"
+                    >
+                        <SettingsIcon size={20} />
+                    </button>
+                </div>
+
+                {/* Profile Section */}
+                <div className="flex items-center gap-3 relative">
+                    <div className="flex flex-col items-end hidden sm:flex">
+                        <span className="text-sm font-bold text-slate-900 leading-none">{currentUser.name}</span>
+                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">{currentUser.role.replace('_', ' ')}</span>
+                    </div>
+                    <button 
+                        onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                        className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold border transition-all shadow-sm
+                            ${isProfileMenuOpen 
+                                ? 'bg-indigo-600 text-white border-indigo-700' 
+                                : 'bg-indigo-100 text-indigo-700 border-indigo-200 hover:ring-2 hover:ring-indigo-200'}`}
+                        title="Account Profile"
+                    >
+                        {currentUser.name.charAt(0)}
+                    </button>
+
+                    {/* Profile Dropdown Menu */}
+                    {isProfileMenuOpen && (
+                        <>
+                            <div 
+                                className="fixed inset-0 z-30" 
+                                onClick={() => setIsProfileMenuOpen(false)}
+                            />
+                            <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 z-40 overflow-hidden animate-scale-in">
+                                <div className="p-4 bg-slate-50 border-b border-slate-200">
+                                    <p className="text-sm font-bold text-slate-900">{currentUser.name}</p>
+                                    <p className="text-xs text-slate-500 font-medium">{currentUser.email}</p>
+                                    <div className="mt-2 flex items-center gap-1.5">
+                                        <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase rounded-md">
+                                            {currentUser.role.replace('_', ' ')}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="p-2">
+                                    <button 
+                                        onClick={() => { setActiveTab('Settings'); setIsProfileMenuOpen(false); }}
+                                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+                                    >
+                                        <User size={18} className="text-slate-400" />
+                                        <span>My Profile</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => { setShowRoleSwitcher(true); setIsProfileMenuOpen(false); }}
+                                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+                                    >
+                                        <RefreshCw size={18} className="text-slate-400" />
+                                        <span>Switch Role</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => { setActiveTab('Settings'); setIsProfileMenuOpen(false); }}
+                                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+                                    >
+                                        <SettingsIcon size={18} className="text-slate-400" />
+                                        <span>System Settings</span>
+                                    </button>
+                                    <div className="my-1 border-t border-slate-100" />
+                                    <button 
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-rose-600 hover:bg-rose-50 rounded-lg transition-colors font-medium"
+                                    >
+                                        <LogOut size={18} className="text-rose-500" />
+                                        <span>Sign Out</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+        </header>
+        <div className="flex-1 overflow-auto p-6 relative">
+            {renderContent()}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default App;

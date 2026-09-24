@@ -1,0 +1,16 @@
+include ':app'
+project(':app').projectDir = file('android/app')
+rootProject.name = "Newgate POS"
+
+// Capacitor Android plugins from root
+def capacitorAndroid = file('node_modules/@capacitor/android/capacitor')
+if (capacitorAndroid.exists()) {
+    include ':capacitor-android'
+    project(':capacitor-android').projectDir = capacitorAndroid
+}
+
+def capacitorSqlite = file('node_modules/@capacitor-community/sqlite/android')
+if (capacitorSqlite.exists()) {
+    include ':capacitor-community-sqlite'
+    project(':capacitor-community-sqlite').projectDir = capacitorSqlite
+}

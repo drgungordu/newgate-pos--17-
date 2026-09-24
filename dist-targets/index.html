@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Newgate Pos</title>
+    <meta name="description" content="A comprehensive full-stack style business management suite featuring dashboard analytics, employee and customer management, sales tracking, and AI-driven peer insights using Gemini." />
+    <script>
+      (function() {
+        var TAG = "NewgatePOS";
+        function sendToNative(tag, msg, isError) {
+          try {
+            if (window.NewgateNativeBridge) {
+              if (isError && window.NewgateNativeBridge.logError) {
+                window.NewgateNativeBridge.logError(tag, msg);
+                return;
+              }
+              if (window.NewgateNativeBridge.logInfo) {
+                window.NewgateNativeBridge.logInfo(tag, msg);
+                return;
+              }
+            }
+          } catch (e) {}
+        }
+        window.logToNative = function(tag, msg, isError) {
+          if (isError) {
+            console.error("[" + tag + "] " + msg);
+          } else {
+            console.log("[" + tag + "] " + msg);
+          }
+          sendToNative(tag, msg, isError);
+        };
+
+        // Forward console.error to native Logcat
+        var origError = console.error;
+        console.error = function() {
+          origError.apply(console, arguments);
+          try {
+            var parts = [];
+            for (var i = 0; i < arguments.length; i++) {
+              var arg = arguments[i];
+              parts.push(typeof arg === 'object' ? (arg instanceof Error ? (arg.stack || arg.message) : JSON.stringify(arg)) : String(arg));
+            }
+            sendToNative(TAG + "/ConsoleError", parts.join(' '), true);
+          } catch (err) {}
+        };
+
+        // Forward console.warn to native Logcat
+        var origWarn = console.warn;
+        console.warn = function() {
+          origWarn.apply(console, arguments);
+          try {
+            var parts = [];
+            for (var i = 0; i < arguments.length; i++) {
+              var arg = arguments[i];
+              parts.push(typeof arg === 'object' ? JSON.stringify(arg) : String(arg));
+            }
+            sendToNative(TAG + "/ConsoleWarn", parts.join(' '), false);
+          } catch (err) {}
+        };
+
+        // 1 & 2: Log WebView loading index.html
+        window.logToNative(TAG, "WebView loading index.html");
+
+        // 3: Log index.html loaded
+        document.addEventListener("DOMContentLoaded", function() {
+          window.logToNative(TAG, "index.html loaded");
+        });
+
+        // Uncaught Error listener
+        window.addEventListener("error", function(event) {
+          var errorMsg = "Uncaught Error: " + (event.message || event.error);
+          if (event.filename) errorMsg += " at " + event.filename + ":" + event.lineno + ":" + event.colno;
+          if (event.error && event.error.stack) errorMsg += "\nStack: " + event.error.stack;
+          window.logToNative(TAG + "/WebViewError", errorMsg, true);
+        });
+
+        // Unhandled Promise rejection listener
+        window.addEventListener("unhandledrejection", function(event) {
+          var reason = event.reason;
+          var errorMsg = "Unhandled Rejection: " + (reason && reason.stack ? reason.stack : (reason && reason.message ? reason.message : reason));
+          window.logToNative(TAG + "/UnhandledRejection", errorMsg, true);
+        });
+      })();
+    </script>
+    <script src="/assets/tailwind.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-4px); }
+        75% { transform: translateX(4px); }
+      }
+      .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }
+    </style>
+    <script type="module" crossorigin src="/assets/index-CEx0ia8U.js"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased">
+    <div id="root"></div>
+  </body>
+</html>
