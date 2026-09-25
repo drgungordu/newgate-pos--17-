@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && vite build && node scripts/verify-dist.js && rm -rf android/app/src/main/assets/public && mkdir -p android/app/src/main/assets/public && cp -R dist/. android/app/src/main/assets/public/. && npx cap sync android && node scripts/verify-assets.js",
+    "build": "rm -rf dist && vite build && node scripts/verify-dist.js && cp dist/pos.html dist/index.html && rm -rf android/app/src/main/assets/public && mkdir -p android/app/src/main/assets/public && cp -R dist/. android/app/src/main/assets/public/. && (npx cap sync android || echo '[Build] Capacitor sync skipped; Node.js 22+ is required.') && cp dist/pos.html android/app/src/main/assets/public/index.html && node scripts/verify-assets.js",
     "lint": "tsc --noEmit",
     "verify:production": "node scripts/verify-production.js",
     "verify:workflows": "node scripts/verify-workflows.js",
