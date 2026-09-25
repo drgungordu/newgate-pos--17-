@@ -72,6 +72,7 @@ export interface AppTileConfig {
   color: string;
   badge: string | null;
   permissionRequired: string;
+  blocked?: boolean;
 }
 
 export interface TileContext {
@@ -369,15 +370,6 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
     const matchesRole = app.deviceRoles.includes('ALL') || app.deviceRoles.includes(deviceRole);
     if (!matchesRole) return false;
 
-    // 3. Effective Permissions Filter
-    const hasPermission = PermissionService.can(ctx.effectiveUser, app.requiredPermission);
-    if (!hasPermission) return false;
-
-    // 4. Feature Flags Filter
-    if (app.featureFlag && ctx.featureFlags && ctx.featureFlags[app.featureFlag] === false) {
-      return false;
-    }
-
     return true;
   });
 
@@ -391,5 +383,7 @@ export const getAppTiles = (ctx: TileContext): AppTileConfig[] => {
     color: app.color,
     badge: app.badge ? app.badge(ctx) : null,
     permissionRequired: app.requiredPermission,
+    blocked: !PermissionService.can(ctx.effectiveUser, app.requiredPermission)
+      || Boolean(app.featureFlag && ctx.featureFlags && ctx.featureFlags[app.featureFlag] === false),
   }));
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Lock, Sparkles } from 'lucide-react';
 interface PosShellHubGridProps {
   hubPage: number;
   setHubPage: React.Dispatch<React.SetStateAction<number>>;
@@ -25,14 +25,27 @@ export const PosShellHubGrid: React.FC<PosShellHubGridProps> = ({
 
   return (
     <section className="h-full w-full flex flex-col">
+      <div className="mb-4 flex items-end justify-between px-2">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.24em] text-slate-500">Applications</div>
+          <div className="mt-1 text-xl font-black tracking-tight text-white">Choose an app</div>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-500">
+          <Sparkles size={14} className="text-amber-400" />
+          <span>{appTiles.length} apps on this terminal</span>
+        </div>
+      </div>
+
       <div className="
         flex-1
         grid
-        grid-cols-3
+        grid-cols-2
+        md:grid-cols-3
         xl:grid-cols-4
-        gap-x-8
-        gap-y-7
-        content-center
+        gap-4
+        content-start
+        overflow-y-auto
+        pb-4
       ">
         {currentTiles.map((tile) => {
           const disabled = tile.blocked || tile.disabled;
@@ -44,37 +57,39 @@ export const PosShellHubGrid: React.FC<PosShellHubGridProps> = ({
               onClick={() => !disabled && onSelectRoute(tile.id)}
               className={`
                 group
-                min-h-[112px]
-                rounded-lg
+                min-h-[172px]
+                rounded-2xl
+                border border-white/[0.06]
+                bg-[#20262d]
+                p-4
                 flex flex-col
-                items-center
-                justify-center
-                gap-3
+                items-start
+                justify-between
                 transition-all
                 active:scale-[0.97]
 
                 ${
                   disabled
-                    ? 'opacity-35 cursor-not-allowed'
-                    : 'hover:bg-white/[0.055]'
+                    ? 'opacity-55 cursor-not-allowed'
+                    : 'hover:-translate-y-0.5 hover:border-white/15 hover:bg-[#293139] hover:shadow-xl hover:shadow-black/20'
                 }
               `}
             >
               <div className="
                 relative
-                w-[64px]
-                h-[64px]
-                rounded-2xl
-                bg-[#2a3037]
+                w-[76px]
+                h-[76px]
+                rounded-[22px]
+                ${tile.color || 'bg-slate-700 text-white'}
                 flex items-center
                 justify-center
-                text-indigo-300
-                group-hover:bg-[#303740]
-                group-hover:text-indigo-200
+                shadow-inner
+                group-hover:scale-105
+                transition-transform
               ">
                 {React.cloneElement(tile.icon, {
-                  size: 34,
-                  strokeWidth: 1.8,
+                  size: 48,
+                  strokeWidth: 1.7,
                 })}
 
                 {tile.badge && (
@@ -97,16 +112,24 @@ export const PosShellHubGrid: React.FC<PosShellHubGridProps> = ({
                     {tile.badge}
                   </span>
                 )}
+                {disabled && (
+                  <span className="absolute -bottom-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#20262d] bg-slate-700 text-slate-300">
+                    <Lock size={13} />
+                  </span>
+                )}
               </div>
 
-              <div className="text-center">
+              <div className="text-left">
                 <div className="
-                  text-[15px]
-                  font-semibold
+                  text-[16px]
+                  font-extrabold
                   text-slate-100
                   tracking-tight
                 ">
                   {tile.label}
+                </div>
+                <div className="mt-1 line-clamp-2 text-[11px] leading-4 text-slate-500">
+                  {tile.sub}
                 </div>
               </div>
             </button>
